@@ -13,6 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.mad_project_house_booking.ui.theme.MAD_Project_House_bookingTheme
 
 import com.example.mad_project_house_booking.SimpleRegistrationForm // Import Registration.kt
@@ -23,7 +26,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    LoginPage() // Call SimpleRegistrationForm
+                    val navController = rememberNavController()
+
+                    NavHost(navController = navController, startDestination = "login") {
+                        composable("login") { LoginPage(navController) }
+                        composable("registration") { SimpleRegistrationForm(navController) }
+                    }
                 }
             }
         }

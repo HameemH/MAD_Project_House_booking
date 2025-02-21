@@ -3,6 +3,7 @@ package com.example.mad_project_house_booking
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -11,13 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.navigation.NavHostController
 
 
 @Composable
-fun SimpleRegistrationForm() {
+fun SimpleRegistrationForm(navController: NavHostController) {
     // State variables for form fields
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -36,7 +38,7 @@ fun SimpleRegistrationForm() {
     ) {
         // Title
         Text(
-            text = "House Booking App",
+            text = "Registration",
             fontSize = 24.sp,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -94,6 +96,19 @@ fun SimpleRegistrationForm() {
                 .padding(top = 16.dp)
         ) {
             Text("Register")
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "Already Have an Account? ")
+            Text(
+                text = "Login",
+                color = MaterialTheme.colorScheme.primary, // Using theme's primary color as link
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier.clickable{
+                    navController.navigate("login")
+                }
+            )
+
         }
 
         // Success Message
