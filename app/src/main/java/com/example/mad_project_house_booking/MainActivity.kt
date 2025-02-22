@@ -1,5 +1,6 @@
 package com.example.mad_project_house_booking
 
+import RoomSelectionScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,6 +32,10 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = "login") {
                         composable("login") { LoginPage(navController) }
                         composable("registration") { SimpleRegistrationForm(navController) }
+                        composable("userLanding"){ RoomSelectionScreen()
+                        }
+                        composable("adminLanding"){}
+                        composable("addproperty"){ AddPropertyForm() }
                     }
                 }
             }

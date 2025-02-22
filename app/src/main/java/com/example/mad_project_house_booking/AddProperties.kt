@@ -35,9 +35,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 
 @Composable
-fun AddPropertyForm(onPropertyAdded: (Map<String, Any>) -> Unit = {}) {
+fun AddPropertyForm() {
 
     var location by remember { mutableStateOf("") }
     var houseName by remember { mutableStateOf("") }
@@ -166,7 +168,7 @@ fun AddPropertyForm(onPropertyAdded: (Map<String, Any>) -> Unit = {}) {
 //                        it.toString()
 //                    } // Store image URIs as strings
                 )
-                onPropertyAdded(propertyData)
+               // onPropertyAdded(propertyData)
                 Toast.makeText(context, "Property data ready to send firebase", Toast.LENGTH_SHORT).show()
                 // Here you would add the Firebase logic to push the data
                 // For example: FirebaseDatabase.getInstance().reference.child("properties").push().setValue(propertyData)

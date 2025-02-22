@@ -111,7 +111,7 @@ fun LoginPage(navController:NavHostController) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
-            // Handle login logic here
+            navController.navigate("userLanding")
         }) {
             Text(text = "Login", color = Color.White) // White text on button
             }
