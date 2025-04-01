@@ -32,10 +32,9 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = "login") {
                         composable("login") { LoginPage(navController) }
                         composable("registration") { SimpleRegistrationForm(navController) }
-                        composable("userLanding"){ RoomSelectionScreen()
-                        }
+                        composable("userLanding"){ BottomNav() }
                         composable("adminLanding"){}
-                        composable("addproperty"){ AddPropertyForm() }
+
                     }
                 }
             }

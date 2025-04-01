@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "143623365924",
+    "project_id": "mad-project-house-booking",
+    "storage_bucket": "mad-project-house-booking.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:143623365924:android:ab62c964d7e55f3e893fb1",
+        "android_client_info": {
+          "package_name": "com.example.mad_project_house_booking"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfhysrfba_OIJqfv6mjS9JplBD-9Sjyb0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

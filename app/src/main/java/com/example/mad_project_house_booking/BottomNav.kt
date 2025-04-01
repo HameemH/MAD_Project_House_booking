@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun BottomNav(modifier: Modifier = Modifier) {
 
+    var currentRoute by remember { mutableStateOf("userLanding") } // Initial route
 
     val navItemList = listOf(
         NavItem("Home", Icons.Default.Home,"userLanding"),
@@ -45,18 +47,14 @@ fun BottomNav(modifier: Modifier = Modifier) {
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar {
-                navItemList.forEachIndexed { index, navItem ->
+                navItemList.forEach { navItem ->
                     NavigationBarItem(
-                        selected =  selectedIndex == index ,
+                        selected = currentRoute == navItem.route,
                         onClick = {
-                            selectedIndex = index
-
+                            currentRoute = navItem.route // Update route on click
                         },
                         icon = {
-
-                                Icon(imageVector = navItem.icon, contentDescription = "Icon")
-
-
+                            Icon(imageVector = navItem.icon, contentDescription = "Icon")
                         },
                         label = {
                             Text(text = navItem.label)
@@ -66,16 +64,19 @@ fun BottomNav(modifier: Modifier = Modifier) {
             }
         }
     ) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding),selectedIndex)
-    }
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            when (currentRoute) {
+                "userLanding" -> RoomSelectionScreen()
+                "addproperty" -> AddPropertyForm()
+
+            }
+        }
 }
 
 
-@Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex : Int) {
-    when(selectedIndex){
-        0->RoomSelectionScreen()
-        1-> AddPropertyForm()
 
-    }
 }
