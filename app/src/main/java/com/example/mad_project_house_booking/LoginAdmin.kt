@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,11 +21,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 
 @Composable
-fun LoginPage(navController:NavHostController) {
+fun LoginAdmin(navController:NavHostController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var selectedRole by remember { mutableStateOf("User") } // Default role
 
+
+    //Total front end
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -73,41 +76,30 @@ fun LoginPage(navController:NavHostController) {
         )
 
 
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Don't have an account? ")
-            Text(
-                text = "Create Account",
-                color = MaterialTheme.colorScheme.primary, // Using theme's primary color as link
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable{
-                    navController.navigate("registration") // Navigate to Registration.kt
-                }
-            )
 
-        }
+
+
+
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
             navController.navigate("userLanding")
         }) {
             Text(text = "Login", color = Color.White) // White text on button
-            }
-
+        }
         Spacer(modifier = Modifier.height(20.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Are You an Admin? ")
+            Text(text = "Are you a User? ")
             Text(
-                text = "Admin Login",
+                text = "User Login",
                 color = MaterialTheme.colorScheme.primary, // Using theme's primary color as link
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier.clickable{
-                    navController.navigate("adminLogin") // Navigate to Registration.kt
+                    navController.navigate("login") // Navigate to Registration.kt
                 }
             )
 
         }
 
-
-   }
+    }
 }
