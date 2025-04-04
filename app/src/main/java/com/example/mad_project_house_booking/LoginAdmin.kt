@@ -24,7 +24,7 @@ import androidx.navigation.compose.composable
 fun LoginAdmin(navController:NavHostController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var selectedRole by remember { mutableStateOf("User") } // Default role
+
 
 
     //Total front end
@@ -37,7 +37,7 @@ fun LoginAdmin(navController:NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Log In",
+            text = "Admin Log In",
             fontSize = 24.sp,
             modifier = Modifier.padding(bottom = 16.dp)
         )

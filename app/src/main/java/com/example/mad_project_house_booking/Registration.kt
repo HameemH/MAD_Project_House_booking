@@ -1,6 +1,7 @@
 package com.example.mad_project_house_booking
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
@@ -8,8 +9,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
@@ -19,15 +22,28 @@ import androidx.navigation.NavHostController
 
 
 @Composable
-fun SimpleRegistrationForm(navController: NavHostController) {
+fun SimpleRegistrationForm(navController: NavHostController,authViewModel: AuthViewModel) {
     // State variables for form fields
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var phoneNumber by remember { mutableStateOf("") }
+    var contact by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    // State for showing a success message
-    var showSuccessMessage by remember { mutableStateOf(false) }
+    val authState = authViewModel.authState.observeAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(authState.value) {
+        when (authState.value) {
+            is AuthState.Authenticated -> navController.navigate("userLanding")
+            is AuthState.Error -> Toast.makeText(
+                context,
+                (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT
+            ).show()
+
+            else -> Unit
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -64,8 +80,8 @@ fun SimpleRegistrationForm(navController: NavHostController) {
 
         // Phone Number Field
         OutlinedTextField(
-            value = phoneNumber,
-            onValueChange = { phoneNumber = it },
+            value =  contact,
+            onValueChange = { contact = it },
             label = { Text("Phone Number") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -86,10 +102,8 @@ fun SimpleRegistrationForm(navController: NavHostController) {
         // Register Button
         Button(
             onClick = {
-                // Validate form and show success message
-                if (name.isNotEmpty() && email.isNotEmpty() && phoneNumber.isNotEmpty() && password.isNotEmpty()) {
-                    showSuccessMessage = true
-                }
+                authViewModel.signup(email, password,name, contact )
+
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -111,22 +125,8 @@ fun SimpleRegistrationForm(navController: NavHostController) {
 
         }
 
-        // Success Message
-        if (showSuccessMessage) {
-            Text(
-                text = "Registration Successful!",
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 18.sp,
-                modifier = Modifier.padding(top = 16.dp)
-            )
-        }
+
+
     }
 }
 
-@Composable
-fun HouseBookingTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colorScheme = MaterialTheme.colorScheme,
-        content =content
-    )
-}

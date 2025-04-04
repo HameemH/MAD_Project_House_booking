@@ -24,12 +24,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-
+import androidx.navigation.NavHostController
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomNav(modifier: Modifier = Modifier) {
+fun BottomNav(modifier: Modifier = Modifier,authViewModel: AuthViewModel,navController: NavHostController) {
 
     var currentRoute by remember { mutableStateOf("userLanding") } // Initial route
 
@@ -70,7 +70,7 @@ fun BottomNav(modifier: Modifier = Modifier) {
                 .fillMaxSize()
         ) {
             when (currentRoute) {
-                "userLanding" -> RoomSelectionScreen()
+                "userLanding" -> RoomSelectionScreen(navController ,authViewModel)
                 "addproperty" -> AddPropertyForm()
 
             }
