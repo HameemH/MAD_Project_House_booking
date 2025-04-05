@@ -22,7 +22,7 @@ import com.example.mad_project_house_booking.RoomSelectionCard
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthViewModel) {
+fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: AuthViewModel) {
     // List of rooms
     val rooms = remember {
         mutableStateListOf(
@@ -118,27 +118,27 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
                 }
             }
         }
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
 
 
-        // LazyColumn for displaying multiple rooms
-        LazyColumn {
-            items(rooms) { room ->
-                RoomSelectionCard(
-                    roomName = room.name,
-                    price = room.price,
-                    isAvailable = room.isAvailable,
-                    imageResId = room.imageResId
-                ) {
-                    println("${room.name} booked!")
+            // LazyColumn for displaying multiple rooms
+            LazyColumn {
+                items(rooms) { room ->
+                    RoomSelectionCard(
+                        roomName = room.name,
+                        price = room.price,
+                        isAvailable = room.isAvailable,
+                        imageResId = room.imageResId
+                    ) {
+                        println("${room.name} booked!")
+                    }
                 }
             }
+
+            // BottomNav()
         }
 
-       // BottomNav()
-    }
 
 
 
-
-}}
+    }}

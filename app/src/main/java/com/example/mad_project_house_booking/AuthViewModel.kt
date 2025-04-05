@@ -1,11 +1,12 @@
 package  com.example.mad_project_house_booking
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-
+import androidx.compose.runtime.State
 
 class AuthViewModel : ViewModel() {
 
@@ -18,6 +19,25 @@ class AuthViewModel : ViewModel() {
 
     init {
         checkAuthStatus()
+    }
+    //to get personal info of users
+    private val _username = mutableStateOf("User")
+    val username: State<String> get() = _username
+    private val _email = mutableStateOf("Email not found")
+    val email: State<String> get() = _email
+
+    private val _contact = mutableStateOf("Contact not found")
+    val contact: State<String> get() = _contact
+
+    fun fetchUserProfile(uid: String) {
+        FirebaseFirestore.getInstance().collection("users").document(uid).get()
+            .addOnSuccessListener { doc ->
+                if (doc.exists()) {
+                    _username.value = doc.getString("name") ?: "User"
+                    _email.value = doc.getString("email") ?: "Email not found"
+                    _contact.value = doc.getString("contact") ?: "Contact not found"
+                }
+            }
     }
 
 

@@ -1,6 +1,8 @@
 package com.example.mad_project_house_booking
 
+
 import RoomSelectionScreen
+import RoomSelectionScreenAdmin
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,15 +31,15 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomNav(modifier: Modifier = Modifier,authViewModel: AuthViewModel,navController: NavHostController) {
+fun BottomNavAdmin(modifier: Modifier = Modifier,authViewModel: AuthViewModel,navController: NavHostController) {
 
-    var currentRoute by remember { mutableStateOf("userLanding") } // Initial route
+    var currentRoute by remember { mutableStateOf("adminLanding") } // Initial route
 
     val navItemList = listOf(
-        NavItem("Home", Icons.Default.Home,"userLanding"),
-        NavItem("Profile", Icons.Default.Notifications,"addproperty"),
+        NavItem("Home", Icons.Default.Home,"adminLanding"),
+        NavItem("Add", Icons.Default.Notifications,"addproperty"),
 
-    )
+        )
 
     var selectedIndex by remember {
         mutableIntStateOf(0)
@@ -70,12 +72,12 @@ fun BottomNav(modifier: Modifier = Modifier,authViewModel: AuthViewModel,navCont
                 .fillMaxSize()
         ) {
             when (currentRoute) {
-                "userLanding" -> RoomSelectionScreen(navController ,authViewModel)
-                "addproperty" -> UserProfile(navController ,authViewModel)
+                "adminLanding" -> RoomSelectionScreenAdmin(navController ,authViewModel)
+                "addproperty" -> AddPropertyForm()
 
             }
         }
-}
+    }
 
 
 

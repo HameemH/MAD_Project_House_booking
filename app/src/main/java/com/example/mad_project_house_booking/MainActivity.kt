@@ -32,8 +32,8 @@ class MainActivity : ComponentActivity() {
                         composable("login") { LoginPage(navController,authViewModel) }
                         composable("registration") { SimpleRegistrationForm(navController,authViewModel) }
                         composable("userLanding"){ BottomNav(Modifier,authViewModel,navController) }
-                        composable("adminLanding"){}
-                        composable("adminLogin"){ LoginAdmin(navController) }
+                        composable("adminLanding"){ BottomNavAdmin(Modifier,authViewModel,navController) }
+                        composable("adminLogin"){ LoginAdmin(navController,authViewModel) }
 
                     }
                 }
