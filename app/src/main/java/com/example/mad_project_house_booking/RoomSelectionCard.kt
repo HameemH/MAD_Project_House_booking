@@ -1,9 +1,11 @@
 package com.example.mad_project_house_booking
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -14,66 +16,64 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.HorizontalPager
+import coil.compose.AsyncImage
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun RoomSelectionCard(
     roomName: String,
     price: String,
     isAvailable: Boolean,
-    imageResId: Int, // Image resource ID
+    imageUrls: List<String>,
     onBookClick: () -> Unit,
-    onDetailsClick: () -> Unit // New callback for details button
+    onDetailsClick: () -> Unit
 ) {
+
+    val pagerState = rememberPagerState(pageCount = { imageUrls.size })
     Card(
-        shape = RoundedCornerShape(16.dp), // Rounded edges
+        shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clip(RoundedCornerShape(16.dp)) // Clipping to avoid overflow
-            .background(Color.LightGray), // Gray background
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.LightGray),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(2.dp, Color.DarkGray) // Border
+        border = BorderStroke(2.dp, Color.DarkGray)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            // Room Image
-            Image(
-                painter = painterResource(id = imageResId),
-                contentDescription = "Room Image",
-                contentScale = ContentScale.Crop,
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+
+            HorizontalPager(
+                state = pagerState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(150.dp)
-                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)) // Clip image corners
-            )
+                    .height(180.dp)
+            ) { page ->
+                AsyncImage(
+                    model = imageUrls[page],
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Room Name
             Text(text = roomName, fontSize = 20.sp, color = Color.Black, style = MaterialTheme.typography.headlineLarge)
-
             Spacer(modifier = Modifier.height(8.dp))
-
-            // Room Price
             Text(text = "Price: BDT $price / night", fontSize = 16.sp, color = Color.Gray)
-
             Spacer(modifier = Modifier.height(8.dp))
-
-            // Availability Status
             Text(
                 text = if (isAvailable) "Available" else "Not Available",
                 fontSize = 14.sp,
                 color = if (isAvailable) Color.Green else Color.Red
             )
-
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Book Now Button
             Button(
-                onClick = { onBookClick() },
+                onClick = onBookClick,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = isAvailable,
                 colors = ButtonDefaults.buttonColors(
@@ -81,19 +81,19 @@ fun RoomSelectionCard(
                     contentColor = Color.White
                 )
             ) {
-                Text(text = "Book Request")
+                Text("Book Request")
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Details Button
             OutlinedButton(
-                onClick = { onDetailsClick() },
+                onClick = onDetailsClick,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(50),
                 border = BorderStroke(1.dp, Color.Blue)
             ) {
-                Text(text = "View Details", color = Color.Blue)
+                Text("View Details", color = Color.Blue)
             }
-            }
-}}
+        }
+    }
+}

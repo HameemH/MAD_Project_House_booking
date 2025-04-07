@@ -73,7 +73,7 @@ fun BottomNavAdmin(modifier: Modifier = Modifier,authViewModel: AuthViewModel,na
         ) {
             when (currentRoute) {
                 "adminLanding" -> RoomSelectionScreenAdmin(navController ,authViewModel)
-                "addproperty" -> AddPropertyForm()
+                "addproperty" -> AddPropertyForm(navController)
 
             }
         }

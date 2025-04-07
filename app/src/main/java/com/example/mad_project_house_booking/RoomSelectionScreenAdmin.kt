@@ -25,17 +25,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: AuthViewModel) {
     // List of rooms
-    val rooms = remember {
-        mutableStateListOf(
-            Room("Deluxe Suite", "5000", true, R.drawable.room1),
-            Room("Sonar Bangla Room", "3500", false, R.drawable.room2),
-            Room("Meghna Retreat", "7500", true, R.drawable.room3),
-            Room("Chhayabithi Room", "4000", true, R.drawable.room4),
-            Room("Comfort Stay", "2500", true, R.drawable.room5),
-            Room("Velvet Luxe", "9000", true, R.drawable.room6),
-            Room("Sundori Suite", "8000", true, R.drawable.room7)
-        )
-    }
+
 
     var showCategoryDropdown by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf("All Categories") }
@@ -123,18 +113,7 @@ fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: Au
 
 
             // LazyColumn for displaying multiple rooms
-            LazyColumn {
-                items(rooms) { room ->
-                    RoomSelectionCardAdmin(
-                        roomName = room.name,
-                        price = room.price,
-                        isAvailable = room.isAvailable,
-                        imageResId = room.imageResId
-                    ) {
-                        println("${room.name} booked!")
-                    }
-                }
-            }
+
 
             // BottomNav()
         }

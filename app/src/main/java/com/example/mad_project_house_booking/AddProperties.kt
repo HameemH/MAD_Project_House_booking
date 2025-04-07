@@ -29,7 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 
 @Composable
-fun AddPropertyForm() {
+fun AddPropertyForm(navController: NavHostController) {
 
     var location by remember { mutableStateOf("") }
     var houseName by remember { mutableStateOf("") }
@@ -38,6 +38,7 @@ fun AddPropertyForm() {
     var rent by remember { mutableStateOf("") }
     var facilities by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    var isAvailable by remember{ mutableStateOf(true) }
     var img1 by remember { mutableStateOf("") }
     var img2 by remember { mutableStateOf("") }
     var img3 by remember { mutableStateOf("") }
@@ -140,6 +141,7 @@ fun AddPropertyForm() {
                     "rent" to rent,
                     "facilities" to facilities,
                     "description" to description,
+                    "isAvailable" to true,
                     "img1" to img1,
                     "img2" to img2,
                     "img3" to img3
@@ -150,6 +152,7 @@ fun AddPropertyForm() {
                     .add(property)
                     .addOnSuccessListener {
                         Toast.makeText(context, "✅ Property uploaded!", Toast.LENGTH_SHORT).show()
+
                     }
                     .addOnFailureListener { e ->
                         Toast.makeText(context, "❌ Failed: ${e.message}", Toast.LENGTH_SHORT).show()

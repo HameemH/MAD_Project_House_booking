@@ -20,21 +20,30 @@ import com.example.mad_project_house_booking.R
 import com.example.mad_project_house_booking.Room
 import com.example.mad_project_house_booking.RoomSelectionCard
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthViewModel) {
     // List of rooms
-    val rooms = remember {
-        mutableStateListOf(
-            Room("Deluxe Suite", "5000", true, R.drawable.room1),
-            Room("Sonar Bangla Room", "3500", false, R.drawable.room2),
-            Room("Meghna Retreat", "7500", true, R.drawable.room3),
-            Room("Chhayabithi Room", "4000", true, R.drawable.room4),
-            Room("Comfort Stay", "2500", true, R.drawable.room5),
-            Room("Velvet Luxe", "9000", true, R.drawable.room6),
-            Room("Sundori Suite", "8000", true, R.drawable.room7)
-        )
+    val rooms = remember { mutableStateListOf<Room>() }
+
+    LaunchedEffect(Unit) {
+        FirebaseFirestore.getInstance().collection("properties").get()
+            .addOnSuccessListener { snapshot ->
+                snapshot.documents.forEach { doc ->
+                    val room = Room(
+                        houseName = doc.getString("houseName") ?: "",
+                        rent = doc.getString("rent") ?: "",
+                        isAvailable = true, // Or fetch a field if stored
+                        img1 = doc.getString("img1") ?: "",
+                        img2 = doc.getString("img2") ?: "",
+                        img3 = doc.getString("img3") ?: ""
+                    )
+                    rooms.add(room)
+                }
+            }
     }
+
 
     var showCategoryDropdown by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf("All Categories") }
@@ -125,14 +134,13 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
         LazyColumn {
             items(rooms) { room ->
                 RoomSelectionCard(
-                    roomName = room.name,
-                    price = room.price,
+                    roomName = room.houseName,
+                    price = room.rent,
                     isAvailable = room.isAvailable,
-                    imageResId = room.imageResId,
-                    onBookClick = {}
-                ) {
-                    println("${room.name} booked!")
-                }
+                    imageUrls = listOf(room.img1, room.img2, room.img3),
+                    onBookClick = { /* handle */ },
+                    onDetailsClick = { /* handle */ }
+                )
             }
         }
 
