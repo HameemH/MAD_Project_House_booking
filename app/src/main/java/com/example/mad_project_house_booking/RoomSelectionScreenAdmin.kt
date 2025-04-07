@@ -19,6 +19,7 @@ import com.example.mad_project_house_booking.BottomNav
 import com.example.mad_project_house_booking.R
 import com.example.mad_project_house_booking.Room
 import com.example.mad_project_house_booking.RoomSelectionCard
+import com.example.mad_project_house_booking.RoomSelectionCardAdmin
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -124,7 +125,7 @@ fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: Au
             // LazyColumn for displaying multiple rooms
             LazyColumn {
                 items(rooms) { room ->
-                    RoomSelectionCard(
+                    RoomSelectionCardAdmin(
                         roomName = room.name,
                         price = room.price,
                         isAvailable = room.isAvailable,

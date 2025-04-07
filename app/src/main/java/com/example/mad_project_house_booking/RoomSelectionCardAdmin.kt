@@ -76,6 +76,20 @@ fun RoomSelectionCardAdmin(
                     contentColor = Color.White
                 )
             ) {
-                Text(text = "Book Now")
-            }}
+                Text(text = "Update")
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = { onBookClick() },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = isAvailable,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isAvailable) Color.Blue else Color.Gray,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(text = "Delete")
+            }
+        }
     }}

@@ -128,7 +128,8 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
                     roomName = room.name,
                     price = room.price,
                     isAvailable = room.isAvailable,
-                    imageResId = room.imageResId
+                    imageResId = room.imageResId,
+                    onBookClick = {}
                 ) {
                     println("${room.name} booked!")
                 }

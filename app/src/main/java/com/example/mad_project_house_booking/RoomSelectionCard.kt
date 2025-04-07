@@ -21,7 +21,8 @@ fun RoomSelectionCard(
     price: String,
     isAvailable: Boolean,
     imageResId: Int, // Image resource ID
-    onBookClick: () -> Unit
+    onBookClick: () -> Unit,
+    onDetailsClick: () -> Unit // New callback for details button
 ) {
     Card(
         shape = RoundedCornerShape(16.dp), // Rounded edges
@@ -51,14 +52,17 @@ fun RoomSelectionCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = roomName, fontSize = 20.sp, color = Color.Black)
+            // Room Name
+            Text(text = roomName, fontSize = 20.sp, color = Color.Black, style = MaterialTheme.typography.headlineLarge)
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = "Price: BDT$price / night", fontSize = 16.sp, color = Color.Gray)
+            // Room Price
+            Text(text = "Price: BDT $price / night", fontSize = 16.sp, color = Color.Gray)
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Availability Status
             Text(
                 text = if (isAvailable) "Available" else "Not Available",
                 fontSize = 14.sp,
@@ -67,6 +71,7 @@ fun RoomSelectionCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            // Book Now Button
             Button(
                 onClick = { onBookClick() },
                 modifier = Modifier.fillMaxWidth(),
@@ -76,6 +81,19 @@ fun RoomSelectionCard(
                     contentColor = Color.White
                 )
             ) {
-                Text(text = "Book Now")
-            }}
+                Text(text = "Book Request")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Details Button
+            OutlinedButton(
+                onClick = { onDetailsClick() },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(50),
+                border = BorderStroke(1.dp, Color.Blue)
+            ) {
+                Text(text = "View Details", color = Color.Blue)
+            }
+            }
 }}
