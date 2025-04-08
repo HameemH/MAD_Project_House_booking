@@ -32,12 +32,17 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
             .addOnSuccessListener { snapshot ->
                 snapshot.documents.forEach { doc ->
                     val room = Room(
+                        id = doc.id,
                         houseName = doc.getString("houseName") ?: "",
                         rent = doc.getString("rent") ?: "",
-                        isAvailable = true, // Or fetch a field if stored
+                        isAvailable = true,
                         img1 = doc.getString("img1") ?: "",
                         img2 = doc.getString("img2") ?: "",
-                        img3 = doc.getString("img3") ?: ""
+                        img3 = doc.getString("img3") ?: "",
+                        location = doc.getString("location") ?: "",
+                        roomDetails = doc.getString("roomDetails") ?: "",
+                        facilities = doc.getString("facilities") ?: "",
+                        description = doc.getString("description") ?: ""
                     )
                     rooms.add(room)
                 }
@@ -139,7 +144,7 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
                     isAvailable = room.isAvailable,
                     imageUrls = listOf(room.img1, room.img2, room.img3),
                     onBookClick = { /* handle */ },
-                    onDetailsClick = { /* handle */ }
+                    onDetailsClick = { navController.navigate("details/${room.id}")}
                 )
             }
         }

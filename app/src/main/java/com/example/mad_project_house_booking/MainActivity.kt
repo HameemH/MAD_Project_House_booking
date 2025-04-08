@@ -34,7 +34,10 @@ class MainActivity : ComponentActivity() {
                         composable("userLanding"){ BottomNav(Modifier,authViewModel,navController) }
                         composable("adminLanding"){ BottomNavAdmin(Modifier,authViewModel,navController) }
                         composable("adminLogin"){ LoginAdmin(navController,authViewModel) }
-
+                        composable("details/{propertyId}") { backStackEntry ->
+                            val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
+                            PropertyDetailsScreen(propertyId = propertyId, navController = navController)
+                        }
                     }
                 }
             }
