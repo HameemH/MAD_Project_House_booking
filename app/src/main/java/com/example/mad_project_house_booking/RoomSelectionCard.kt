@@ -36,7 +36,8 @@ fun RoomSelectionCard(
     isAvailable: Boolean,
     imageUrls: List<String>,
     onBookClick: () -> Unit,
-    onDetailsClick: () -> Unit
+    onDetailsClick: () -> Unit,
+    addFav:   ()->Unit
 ) {
 
     Card(
@@ -86,7 +87,7 @@ fun RoomSelectionCard(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 IconButton(
-                    onClick = { /* TODO: Toggle favorite */ },
+                    onClick = addFav,
                     modifier = Modifier
                         .size(48.dp)
                         .border(1.5.dp, Color.Blue, shape = CircleShape)

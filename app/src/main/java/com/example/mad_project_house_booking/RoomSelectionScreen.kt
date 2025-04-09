@@ -1,4 +1,6 @@
 package com.example.mad_project_house_booking
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -59,6 +62,8 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
 
     val uid = FirebaseAuth.getInstance().currentUser?.uid
     val username by authViewModel.username
+
+    val context = LocalContext.current
 
     LaunchedEffect(uid) {
         uid?.let { authViewModel.fetchUserProfile(it) }
@@ -146,8 +151,9 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
                     price = room.rent,
                     isAvailable = room.isAvailable,
                     imageUrls = listOf(room.img1, room.img2, room.img3),
-                    onBookClick = { /* handle */ },
-                    onDetailsClick = { navController.navigate("details/${room.id}")}
+                    onBookClick = { navController.navigate("schedule/${room.id}") },
+                    onDetailsClick = { navController.navigate("details/${room.id}")},
+                    addFav = {ToggleFavoriteProperty(context,uid=uid!!, room.id)}
                 )
             }
         }
@@ -157,5 +163,39 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
 
 
 
-
 }}
+
+
+
+fun ToggleFavoriteProperty(context: Context, uid: String, propertyId: String) {
+    val firestore = FirebaseFirestore.getInstance()
+    val favoritesRef = firestore.collection("favorites")
+
+    val query = favoritesRef
+        .whereEqualTo("userId", uid)
+        .whereEqualTo("propertyId", propertyId)
+
+    query.get()
+        .addOnSuccessListener { snapshot ->
+            if (snapshot.isEmpty) {
+                val favData = hashMapOf(
+                    "userId" to uid,
+                    "propertyId" to propertyId,
+                    "timestamp" to System.currentTimeMillis()
+                )
+
+                favoritesRef.add(favData)
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Added to favorites!", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(context, "Failed: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+            } else {
+                Toast.makeText(context, "Already in favorites!", Toast.LENGTH_SHORT).show()
+            }
+        }
+        .addOnFailureListener { e ->
+            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+}
