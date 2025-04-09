@@ -50,7 +50,8 @@ fun PropertyDetailsScreen(propertyId: String, navController: NavHostController) 
                     location = doc.getString("location") ?: "",
                     roomDetails = doc.getString("roomDetails") ?: "",
                     facilities = doc.getString("facilities") ?: "",
-                    description = doc.getString("description") ?: ""
+                    description = doc.getString("description") ?: "",
+                    houseType = doc.getString("houseType") ?:""
                 )
             }
     }
@@ -114,6 +115,7 @@ fun PropertyDetailsScreen(propertyId: String, navController: NavHostController) 
                 NonEditableField("Room Details", room.roomDetails)
                 NonEditableField("Facilities", room.facilities)
                 NonEditableField("Description", room.description)
+                NonEditableField("House Type", room.houseType)
             }
         }
     }

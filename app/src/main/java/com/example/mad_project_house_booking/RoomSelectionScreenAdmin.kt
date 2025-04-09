@@ -31,6 +31,9 @@ fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: Au
     var selectedRoomId by remember { mutableStateOf("") }
     val context = LocalContext.current
 
+    var showCategoryDropdown by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf("All Categories") }
+    val categories = listOf("All Categories", "General", "Luxury", "Premium")
 
     LaunchedEffect(Unit) {
         FirebaseFirestore.getInstance().collection("properties").get()
@@ -47,15 +50,18 @@ fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: Au
                         location = doc.getString("location") ?: "",
                         roomDetails = doc.getString("roomDetails") ?: "",
                         facilities = doc.getString("facilities") ?: "",
-                        description = doc.getString("description") ?: ""
+                        description = doc.getString("description") ?: "",
+                        houseType = doc.getString("houseType") ?:""
                     )
                     rooms.add(room)
                 }
             }
     }
-    var showCategoryDropdown by remember { mutableStateOf(false) }
-    var selectedCategory by remember { mutableStateOf("All Categories") }
-    val categories = listOf("All Categories", "Suite", "Standard", "Luxury")
+    val filteredRooms = remember(rooms, selectedCategory) {
+        if (selectedCategory == "All Categories") rooms
+        else rooms.filter { it.houseType == selectedCategory }
+    }
+
 
     val uid = FirebaseAuth.getInstance().currentUser?.uid
     val username by authViewModel.username
@@ -140,7 +146,7 @@ fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: Au
 
             // LazyColumn for displaying multiple rooms
             LazyColumn {
-                items(rooms) { room ->
+                items(filteredRooms) { room ->
                     RoomSelectionCardAdmin (
                         roomName = room.houseName,
                         price = room.rent,

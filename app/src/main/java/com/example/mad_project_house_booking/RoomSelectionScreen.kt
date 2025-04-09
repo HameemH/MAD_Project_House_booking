@@ -15,11 +15,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.mad_project_house_booking.AuthViewModel
-import com.example.mad_project_house_booking.BottomNav
-import com.example.mad_project_house_booking.R
-import com.example.mad_project_house_booking.Room
-import com.example.mad_project_house_booking.RoomSelectionCard
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -43,7 +38,9 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
                         location = doc.getString("location") ?: "",
                         roomDetails = doc.getString("roomDetails") ?: "",
                         facilities = doc.getString("facilities") ?: "",
-                        description = doc.getString("description") ?: ""
+                        description = doc.getString("description") ?: "",
+                        houseType = doc.getString("houseType") ?:""
+
                     )
                     rooms.add(room)
                 }
@@ -53,7 +50,12 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
 
     var showCategoryDropdown by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf("All Categories") }
-    val categories = listOf("All Categories", "Suite", "Standard", "Luxury")
+    val categories = listOf("All Categories", "General", "Luxury", "Premium")
+
+    val filteredRooms = remember(rooms, selectedCategory) {
+        if (selectedCategory == "All Categories") rooms
+        else rooms.filter { it.houseType == selectedCategory }
+    }
 
     val uid = FirebaseAuth.getInstance().currentUser?.uid
     val username by authViewModel.username
@@ -138,7 +140,7 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
 
         // LazyColumn for displaying multiple rooms
         LazyColumn {
-            items(rooms) { room ->
+            items(filteredRooms) { room ->
                 RoomSelectionCard(
                     roomName = room.houseName,
                     price = room.rent,

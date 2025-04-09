@@ -40,7 +40,9 @@ fun UpdateProperty(propertyId: String, navController: NavHostController) {
                     location = doc.getString("location") ?: "",
                     roomDetails = doc.getString("roomDetails") ?: "",
                     facilities = doc.getString("facilities") ?: "",
-                    description = doc.getString("description") ?: ""
+                    description = doc.getString("description") ?: "",
+                    houseType = doc.getString("houseType") ?:""
+
                 )
             }
     }
@@ -67,6 +69,7 @@ fun UpdateProperty(propertyId: String, navController: NavHostController) {
         var img1 by remember { mutableStateOf(room.img1) }
         var img2 by remember { mutableStateOf(room.img2) }
         var img3 by remember { mutableStateOf(room.img3) }
+        var houseType by remember { mutableStateOf(room.houseType) }
 
         Scaffold(
             topBar = {
@@ -106,6 +109,7 @@ fun UpdateProperty(propertyId: String, navController: NavHostController) {
                 EditableField("Location", location) { location = it }
                 EditableField("Room Details", roomDetails) { roomDetails = it }
                 EditableField("Facilities", facilities) { facilities = it }
+                CategoryDropdown(houseType = houseType, onTypeChange = { houseType = it })
                 EditableField("Description", description) { description = it }
                 EditableField("Image Link 1", img1) { img1 = it }
                 EditableField("Image Link 2", img2) { img2 = it }
@@ -118,6 +122,7 @@ fun UpdateProperty(propertyId: String, navController: NavHostController) {
                             "rent" to rent,
                             "location" to location,
                             "roomDetails" to roomDetails,
+                            "houseType" to houseType,
                             "facilities" to facilities,
                             "description" to description,
                             "img1" to img1,
