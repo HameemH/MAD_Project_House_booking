@@ -45,14 +45,7 @@ fun AddPropertyForm(navController: NavHostController) {
 
     val context = LocalContext.current
 
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetMultipleContents(),
-        onResult = { uris ->
-            uris.forEach { uri ->
-               // images.add(uri)
-            }
-        }
-    )
+
 
     Column(
         modifier = Modifier
@@ -162,7 +155,7 @@ fun AddPropertyForm(navController: NavHostController) {
                 .fillMaxWidth()
                 .padding(top = 16.dp),
         ) {
-            Text("Submit Property")
+            Text("Add Property")
         }
     }
 }

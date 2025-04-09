@@ -1,6 +1,5 @@
 package com.example.mad_project_house_booking
 
-import RoomSelectionScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,6 +36,10 @@ class MainActivity : ComponentActivity() {
                         composable("details/{propertyId}") { backStackEntry ->
                             val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
                             PropertyDetailsScreen(propertyId = propertyId, navController = navController)
+                        }
+                        composable("update/{propertyId}") { backStackEntry ->
+                            val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
+                            UpdateProperty(propertyId = propertyId, navController = navController)
                         }
                     }
                 }

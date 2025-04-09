@@ -1,3 +1,4 @@
+package com.example.mad_project_house_booking
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

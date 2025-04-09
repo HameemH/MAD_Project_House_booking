@@ -1,6 +1,5 @@
 package com.example.mad_project_house_booking
 
-import RoomSelectionScreen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
