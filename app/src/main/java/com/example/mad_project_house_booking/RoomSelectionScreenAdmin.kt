@@ -1,6 +1,8 @@
 package com.example.mad_project_house_booking
 
-
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,7 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -24,6 +26,11 @@ fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: Au
     // List of rooms
 
     val rooms = remember { mutableStateListOf<Room>() }
+
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var selectedRoomId by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
 
     LaunchedEffect(Unit) {
         FirebaseFirestore.getInstance().collection("properties").get()
@@ -140,15 +147,71 @@ fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: Au
                         isAvailable = room.isAvailable,
                         imageUrls = listOf(room.img1, room.img2, room.img3),
                         onUpdateClick = { navController.navigate("update/${room.id}") },
-                        onDetailsClick = { navController.navigate("details/${room.id}")}
+                        onDetailsClick = { selectedRoomId = room.id
+                            showDeleteDialog = true }
                     )
                 }
             }
 
-            // BottomNav()
+            if (showDeleteDialog && selectedRoomId != null) {
+                DeletePropertyDialog(
+                    roomId = selectedRoomId!!,
+                    onDeleteConfirmed = {
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(context, "Property deleted.", Toast.LENGTH_SHORT).show()
+                        }
+                        rooms.removeIf { it.id == selectedRoomId }
+                        showDeleteDialog = false
+                        selectedRoomId = ""
+                        // Optionally: remove the room from list
+                    },
+                    onDismiss = {
+                        showDeleteDialog = false
+                        selectedRoomId = ""
+                    }
+                )
+            }
+
+
+
         }
 
 
-
-
     }}
+
+
+@Composable
+fun DeletePropertyDialog(
+    roomId: String,
+    onDeleteConfirmed: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val firestore = FirebaseFirestore.getInstance()
+    val context = LocalContext.current
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Delete Property") },
+        text = { Text("Are you sure you want to delete this property?") },
+        confirmButton = {
+            TextButton(onClick = {
+                firestore.collection("properties").document(roomId)
+                    .delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Property deleted.", Toast.LENGTH_SHORT).show()
+                        onDeleteConfirmed()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(context, "Failed to delete: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+            }) {
+                Text("Delete", color = Color.Red)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
