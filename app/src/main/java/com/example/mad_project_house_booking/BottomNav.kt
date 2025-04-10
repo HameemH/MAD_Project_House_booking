@@ -4,12 +4,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
+
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -34,7 +33,8 @@ fun BottomNav(modifier: Modifier = Modifier,authViewModel: AuthViewModel,navCont
 
     val navItemList = listOf(
         NavItem("Home", Icons.Default.Home,"userLanding"),
-        NavItem("Profile", Icons.Default.Notifications,"addproperty"),
+        NavItem("Profile", Icons.Default.Person, "addproperty"),
+        NavItem("Favourite", Icons.Default.Favorite, "favourite")
 
     )
 
@@ -71,6 +71,7 @@ fun BottomNav(modifier: Modifier = Modifier,authViewModel: AuthViewModel,navCont
             when (currentRoute) {
                 "userLanding" -> RoomSelectionScreen(navController ,authViewModel)
                 "addproperty" -> UserProfile(navController ,authViewModel)
+                "favourite"   -> FavouriteScreen(navController ,authViewModel)
 
             }
         }
