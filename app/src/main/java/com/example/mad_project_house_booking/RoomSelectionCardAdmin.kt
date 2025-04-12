@@ -45,7 +45,7 @@ fun RoomSelectionCardAdmin(
 
             Text(text = roomName, fontSize = 20.sp, color = Color.Black, style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Price: BDT $price / night", fontSize = 16.sp, color = Color.Gray)
+            Text(text = "Price: BDT $price / Month", fontSize = 16.sp, color = Color.Gray)
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = if (isAvailable) "Available" else "Not Available",

@@ -73,33 +73,7 @@ fun FavouriteScreen(navController: NavHostController, authViewModel: AuthViewMod
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        // Header Row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.LightGray)
-                .padding(0.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    text = username,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                TextButton(
-                    onClick = {
-                        authViewModel.signout()
-                        navController.navigate("login") {
-                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                        }
-                    },
-                    modifier = Modifier.padding(0.dp)
-                ) {
-                    Text("Sign Out", color = Color.Red)
-                }
-            }
-        }
+
 
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             LazyColumn {

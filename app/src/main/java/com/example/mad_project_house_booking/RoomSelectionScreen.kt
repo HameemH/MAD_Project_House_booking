@@ -34,7 +34,7 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
                         id = doc.id,
                         houseName = doc.getString("houseName") ?: "",
                         rent = doc.getString("rent") ?: "",
-                        isAvailable = true,
+                        isAvailable = doc.getBoolean("isAvailable") ?: true,
                         img1 = doc.getString("img1") ?: "",
                         img2 = doc.getString("img2") ?: "",
                         img3 = doc.getString("img3") ?: "",

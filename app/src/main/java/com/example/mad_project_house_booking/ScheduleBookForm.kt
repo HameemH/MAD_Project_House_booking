@@ -23,7 +23,6 @@ import java.util.Calendar
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
-
 @Composable
 fun ScheduleBookForm(propertyId: String, navController: NavHostController) {
     val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -33,12 +32,46 @@ fun ScheduleBookForm(propertyId: String, navController: NavHostController) {
     var selectedDate by remember { mutableStateOf("") }
     var selectedTime by remember { mutableStateOf("") }
     var bookingRequest by remember { mutableStateOf(false) }
+    var alreadyRequested by remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        firestore.collection("schedules")
+            .whereEqualTo("userId", uid)
+            .whereEqualTo("propertyId", propertyId)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                alreadyRequested = snapshot.documents.any { doc ->
+                    val status = doc.getBoolean("scheduleStatus") ?: false
+                    val rejected = doc.getBoolean("rejected") ?: false
+                    !status && !rejected
+                }
+            }
+    }
+
+    if (alreadyRequested) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Schedule/Booking Request") },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                        }
+                    }
+                )
+            }
+        ) { padding ->
+            Box(modifier = Modifier.padding(padding).fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("You've already submitted a request for this property.", style = MaterialTheme.typography.bodyLarge)
+            }
+        }
+        return
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Schdule/Booking Request") },
+                title = { Text("Schedule/Booking Request") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
@@ -55,11 +88,9 @@ fun ScheduleBookForm(propertyId: String, navController: NavHostController) {
         ) {
             OutlinedTextField(
                 value = selectedDate,
-                onValueChange = {selectedDate=it},
+                onValueChange = { selectedDate = it },
                 label = { Text("Select Date") },
-                modifier = Modifier
-                    .fillMaxWidth()
-
+                modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
@@ -69,9 +100,7 @@ fun ScheduleBookForm(propertyId: String, navController: NavHostController) {
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
                     checked = bookingRequest,
                     onCheckedChange = { bookingRequest = it }
@@ -87,7 +116,9 @@ fun ScheduleBookForm(propertyId: String, navController: NavHostController) {
                         "scheduleDate" to selectedDate,
                         "scheduleTime" to selectedTime,
                         "scheduleStatus" to false,
-                        "bookingRequest" to bookingRequest
+                        "bookingRequest" to bookingRequest,
+                        "adminNotification" to true,
+                        "userNotification" to false
                     )
 
                     firestore.collection("schedules")
