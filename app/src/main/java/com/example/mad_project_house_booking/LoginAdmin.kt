@@ -4,14 +4,13 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextDecoration
@@ -19,9 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
-
 @Composable
-fun LoginAdmin(navController:NavHostController,authViewModel: AuthViewModel) {
+fun LoginAdmin(navController: NavHostController, authViewModel: AuthViewModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -29,88 +27,104 @@ fun LoginAdmin(navController:NavHostController,authViewModel: AuthViewModel) {
     val context = LocalContext.current
 
     LaunchedEffect(authState.value) {
-        when(authState.value){
+        when (authState.value) {
             is AuthState.Authenticated -> navController.navigate("adminLanding")
-            is AuthState.Error -> Toast.makeText(context,
-                (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
+            is AuthState.Error -> Toast.makeText(
+                context,
+                (authState.value as AuthState.Error).message,
+                Toast.LENGTH_SHORT
+            ).show()
             else -> Unit
         }
     }
 
+    // Gradient background brush
+    val gradientBrush = Brush.verticalGradient(
+        colors = listOf(
+            Color(0xFF2193b0), // Light blue
+            Color(0xFF6dd5ed)  // Sky blue
+        )
+    )
 
-    //Total front end
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White) // Set background to White
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(gradientBrush),
+        contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "Admin Log In",
-            fontSize = 24.sp,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-        Text(text = "Email", modifier = Modifier.align(Alignment.Start), color = Color.Black)
-        BasicTextField(
-            value = email,
-            onValueChange = { email = it },
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.95f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            singleLine = true
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Color.Gray) // Gray underline
-        )
+                .fillMaxWidth(0.9f)
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Admin Log In",
+                    fontSize = 24.sp,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
 
-        Spacer(modifier = Modifier.height(10.dp))
+                // Email Field
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-        Text(text = "Password", modifier = Modifier.align(Alignment.Start), color = Color.Black)
-        BasicTextField(
-            value = password,
-            onValueChange = { password = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            singleLine = true
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Color.Gray) // Gray underline
-        )
+                // Password Field
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Password") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-
-
-
-
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(onClick = {
-            authViewModel.login(email, password)
-        }) {
-            Text(text = "Login", color = Color.White) // White text on button
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Are you a User? ")
-            Text(
-                text = "User Login",
-                color = MaterialTheme.colorScheme.primary, // Using theme's primary color as link
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable{
-                    navController.navigate("login") // Navigate to Registration.kt
+                // Login Button
+                Button(
+                    onClick = { authViewModel.login(email, password) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Login", style = androidx.compose.ui.text.TextStyle(
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
+                    )
                 }
-            )
 
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // "User Login" Navigation
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Are you a User? ")
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "User Login",
+                        color = MaterialTheme.colorScheme.primary,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable {
+                            navController.navigate("login")
+                        }
+                    )
+                }
+            }
         }
-
     }
 }

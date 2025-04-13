@@ -38,61 +38,78 @@ fun HandleBooking() {
             }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        LazyColumn {
-            items(schedules) { schedule ->
-                HandleBookingCard(
-                    schedule = schedule,
-                    onAcceptSchedule = {
-                        val scheduleId = schedule["id"] as String
-                        firestore.collection("schedules").document(scheduleId)
-                            .update(
-                                mapOf(
-                                    "scheduleStatus" to true,
-                                    "adminNotification" to false,
-                                    "userNotification" to true
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Incoming Booking Requests",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (schedules.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("No new requests.", style = MaterialTheme.typography.bodyLarge)
+                }
+            } else {
+                LazyColumn {
+                    items(schedules) { schedule ->
+                        HandleBookingCard(
+                            schedule = schedule,
+                            onAcceptSchedule = {
+                                val scheduleId = schedule["id"] as String
+                                firestore.collection("schedules").document(scheduleId)
+                                    .update(
+                                        mapOf(
+                                            "scheduleStatus" to true,
+                                            "adminNotification" to false,
+                                            "userNotification" to true
+                                        )
+                                    )
+                                Toast.makeText(context, "Schedule accepted", Toast.LENGTH_SHORT).show()
+                                removeFromUI(scheduleId)
+                            },
+                            onRejectSchedule = {
+                                selectedScheduleId = schedule["id"] as String
+                                showNoteDialog = true
+                            },
+                            onAcceptBooking = {
+                                val propertyId = schedule["propertyId"] as String
+                                val scheduleId = schedule["id"] as String
+                                val userId = schedule["userId"] as String
+
+                                firestore.collection("schedules").document(scheduleId)
+                                    .update(
+                                        mapOf(
+                                            "scheduleStatus" to true,
+                                            "adminNotification" to false,
+                                            "userNotification" to true
+                                        )
+                                    )
+
+                                firestore.collection("properties").document(propertyId)
+                                    .update("isAvailable", false)
+
+                                val booking = hashMapOf(
+                                    "propertyId" to propertyId,
+                                    "userId" to userId,
+                                    "timestamp" to System.currentTimeMillis()
                                 )
-                            )
-                        Toast.makeText(context, "Schedule accepted", Toast.LENGTH_SHORT).show()
-                        removeFromUI(scheduleId)
-                    },
-                    onRejectSchedule = {
-                        selectedScheduleId = schedule["id"] as String
-                        showNoteDialog = true
-                    },
-                    onAcceptBooking = {
-                        val propertyId = schedule["propertyId"] as String
-                        val scheduleId = schedule["id"] as String
-                        val userId = schedule["userId"] as String
+                                firestore.collection("confirmedBookings").add(booking)
 
-                        firestore.collection("schedules").document(scheduleId)
-                            .update(
-                                mapOf(
-                                    "scheduleStatus" to true,
-                                    "adminNotification" to false,
-                                    "userNotification" to true
-                                )
-                            )
-
-                        firestore.collection("properties").document(propertyId)
-                            .update("isAvailable", false)
-
-                        val booking = hashMapOf(
-                            "propertyId" to propertyId,
-                            "userId" to userId,
-                            "timestamp" to System.currentTimeMillis()
+                                Toast.makeText(context, "Booking accepted and recorded", Toast.LENGTH_SHORT).show()
+                                removeFromUI(scheduleId)
+                            },
+                            onRejectBooking = {
+                                selectedScheduleId = schedule["id"] as String
+                                showNoteDialog = true
+                            }
                         )
-                        firestore.collection("confirmedBookings")
-                            .add(booking)
-
-                        Toast.makeText(context, "Booking accepted and recorded", Toast.LENGTH_SHORT).show()
-                        removeFromUI(scheduleId)
-                    },
-                    onRejectBooking = {
-                        selectedScheduleId = schedule["id"] as String
-                        showNoteDialog = true
                     }
-                )
+                }
             }
         }
     }
@@ -158,34 +175,33 @@ fun HandleBookingCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("User ID: ${schedule["userId"]}")
-            Text("Property ID: ${schedule["propertyId"]}")
-            Text("Date: ${schedule["scheduleDate"]}")
-            Text("Time: ${schedule["scheduleTime"]}")
+            Text("User ID: ${schedule["userId"]}", style = MaterialTheme.typography.bodyMedium)
+            Text("Property ID: ${schedule["propertyId"]}", style = MaterialTheme.typography.bodyMedium)
+            Text("Date: ${schedule["scheduleDate"]}", style = MaterialTheme.typography.bodyMedium)
+            Text("Time: ${schedule["scheduleTime"]}", style = MaterialTheme.typography.bodyMedium)
 
             val bookingRequest = schedule["bookingRequest"] as? Boolean ?: false
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            if (bookingRequest) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = onAcceptBooking) {
-                        Text("Accept Booking")
-                    }
-                    Button(onClick = onRejectBooking) {
-                        Text("Reject Booking")
-                    }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Button(
+                    onClick = if (bookingRequest) onAcceptBooking else onAcceptSchedule,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(if (bookingRequest) "Accept Booking" else "Accept Schedule")
                 }
-            } else {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = onAcceptSchedule) {
-                        Text("Accept Schedule")
-                    }
-                    Button(onClick = onRejectSchedule) {
-                        Text("Reject Schedule")
-                    }
+                OutlinedButton(
+                    onClick = if (bookingRequest) onRejectBooking else onRejectSchedule,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(if (bookingRequest) "Reject Booking" else "Reject Schedule")
                 }
             }
         }

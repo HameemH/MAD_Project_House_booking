@@ -1,24 +1,16 @@
 package com.example.mad_project_house_booking
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 
 import coil.compose.AsyncImage
-import kotlinx.coroutines.launch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -28,7 +20,6 @@ import androidx.navigation.NavHostController
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPagerIndicator
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class,ExperimentalPagerApi::class)
 
@@ -51,7 +42,8 @@ fun PropertyDetailsScreen(propertyId: String, navController: NavHostController) 
                     roomDetails = doc.getString("roomDetails") ?: "",
                     facilities = doc.getString("facilities") ?: "",
                     description = doc.getString("description") ?: "",
-                    houseType = doc.getString("houseType") ?:""
+                    houseType = doc.getString("houseType") ?:"",
+                    isFavorited = false
                 )
             }
     }

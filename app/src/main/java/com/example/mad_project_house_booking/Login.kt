@@ -1,29 +1,30 @@
 package com.example.mad_project_house_booking
 
 import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 
 @Composable
-fun LoginPage(navController:NavHostController,authViewModel: AuthViewModel) {
+fun LoginPage(navController: NavHostController, authViewModel: AuthViewModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -31,96 +32,159 @@ fun LoginPage(navController:NavHostController,authViewModel: AuthViewModel) {
     val context = LocalContext.current
 
     LaunchedEffect(authState.value) {
-        when(authState.value){
+        when (val state = authState.value) {
             is AuthState.Authenticated -> navController.navigate("userLanding")
-            is AuthState.Error -> Toast.makeText(context,
-                (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
+            is AuthState.Error -> Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
             else -> Unit
         }
     }
-    Column(
+
+    val gradientBrush = Brush.verticalGradient(
+        colors = listOf(
+            Color(0xFF1A2980),  // Dark Blue
+            Color(0xFF26D0CE)   // Teal/Cyan
+        )
+    )
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White) // Set background to White
+            .background(gradientBrush)
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        contentAlignment = Alignment.Center
     ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .wrapContentHeight(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Login",
+                    fontSize = 28.sp, // Font size for the text
+                    fontWeight = FontWeight.Bold, // Make the text bold
+                    color = MaterialTheme.colorScheme.primary, // Use the primary color from the theme
+                    letterSpacing = 1.5.sp, // Add some spacing between letters
+                    modifier = Modifier
+                        .padding(bottom = 24.dp) // Padding below the text
+                        .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp)) // Add background with rounded corners
+                        .padding(horizontal = 16.dp, vertical = 8.dp) // Padding inside the background
+                )
+                InputField(
+                    label = "Email Address",
+                    value = email,
+                    onValueChange = { email = it },
+                    placeholder = "Enter your email"
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                InputField(
+                    label = "Password",
+                    value = password,
+                    onValueChange = { password = it },
+                    isPassword = true,
+                    placeholder = "Enter your password"
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = { authViewModel.login(email, password) },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                ) {
+                    Text(text = "Login", color = Color.White, fontSize = 16.sp)
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                AccountPrompt(
+                    prompt = "Don't have an account?",
+                    actionText = "Sign Up",
+                    onClick = { navController.navigate("registration") }
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                AccountPrompt(
+                    prompt = "Are you an admin?",
+                    actionText = "Admin Login",
+                    onClick = { navController.navigate("adminLogin") }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun InputField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    isPassword: Boolean = false,
+    placeholder: String
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "User Log In",
-            fontSize = 24.sp,
-            modifier = Modifier.padding(bottom = 16.dp)
+            text = label,
+            color = Color.DarkGray,
+            fontSize = 14.sp,
+            modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
         )
-        Text(text = "Email", modifier = Modifier.align(Alignment.Start), color = Color.Black)
-        BasicTextField(
-            value = email,
-            onValueChange = { email = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            singleLine = true
-        )
+
         Box(
             modifier = Modifier
+                .background(Color.White, shape = RoundedCornerShape(10.dp))
+                .border(BorderStroke(1.dp, Color.LightGray), shape = RoundedCornerShape(10.dp))
                 .fillMaxWidth()
-                .height(1.dp)
-                .background(Color.Gray) // Gray underline
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(text = "Password", modifier = Modifier.align(Alignment.Start), color = Color.Black)
-        BasicTextField(
-            value = password,
-            onValueChange = { password = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            singleLine = true
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Color.Gray) // Gray underline
-        )
-
-
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Don't have an account? ")
-            Text(
-                text = "Create Account",
-                color = MaterialTheme.colorScheme.primary, // Using theme's primary color as link
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable{
-                    navController.navigate("registration") // Navigate to Registration.kt
-                }
+                .height(52.dp)
+                .padding(horizontal = 12.dp, vertical = 4.dp)
+        ) {
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+                textStyle = TextStyle(color = Color.Black, fontSize = 16.sp),
+                singleLine = true,
+                decorationBox = { innerTextField ->
+                    if (value.isEmpty()) {
+                        Text(
+                            text = placeholder,
+                            color = Color.Gray,
+                            fontSize = 16.sp
+                        )
+                    }
+                    innerTextField()
+                },
+                modifier = Modifier.fillMaxSize()
             )
-
         }
-        Spacer(modifier = Modifier.height(20.dp))
+    }
+}
 
-        Button(onClick = {
-            authViewModel.login(email, password)
-        }) {
-            Text(text = "Login", color = Color.White) // White text on button
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Are You an Admin? ")
-            Text(
-                text = "Admin Login",
-                color = MaterialTheme.colorScheme.primary, // Using theme's primary color as link
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable{
-                    navController.navigate("adminLogin") // Navigate to Registration.kt
-                }
-            )
-
-        }
-
-
+@Composable
+fun AccountPrompt(prompt: String, actionText: String, onClick: () -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(text = prompt, color = Color.DarkGray)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = actionText,
+            color = MaterialTheme.colorScheme.primary,
+            textDecoration = TextDecoration.Underline,
+            modifier = Modifier.clickable(onClick = onClick)
+        )
     }
 }

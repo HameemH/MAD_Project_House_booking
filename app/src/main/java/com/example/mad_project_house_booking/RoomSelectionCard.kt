@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.foundation.border
+import androidx.compose.ui.layout.ContentScale
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
@@ -33,6 +34,7 @@ import androidx.compose.foundation.border
 fun RoomSelectionCard(
     roomName: String,
     price: String,
+    isFavorited: Boolean,
     isAvailable: Boolean,
     imageUrls: List<String>,
     onBookClick: () -> Unit,
@@ -93,10 +95,11 @@ fun RoomSelectionCard(
                         .border(1.5.dp, Color.Blue, shape = CircleShape)
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Add to Favorites",
-                        tint = Color.Blue
+                        imageVector = if (isFavorited) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        tint = Color.Red
                     )
+
                 }
             }
 
@@ -134,27 +137,28 @@ fun ImageSliderWithIndicators(imageUrls: List<String>) {
         ) { page ->
             AsyncImage(
                 model = imageUrls[page],
-                contentDescription = null,
+                contentDescription = "Property image ${page + 1}",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Dot Indicator
-        Row(horizontalArrangement = Arrangement.Center) {
-            repeat(imageUrls.size) { index ->
-                val isSelected = pagerState.currentPage == index
-                Box(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .size(if (isSelected) 10.dp else 8.dp)
-                        .background(
-                            color = if (isSelected) Color.Blue else Color.LightGray,
-                            shape = CircleShape
-                        )
-                )
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            Row {
+                repeat(imageUrls.size) { index ->
+                    val isSelected = pagerState.currentPage == index
+                    Box(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .size(if (isSelected) 10.dp else 8.dp)
+                            .clip(CircleShape)
+                            .background(if (isSelected) Color.Blue else Color.LightGray)
+                    )
+                }
             }
         }
     }
 }
+

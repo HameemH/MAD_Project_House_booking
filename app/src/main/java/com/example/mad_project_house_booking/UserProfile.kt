@@ -1,13 +1,17 @@
 package com.example.mad_project_house_booking
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -56,8 +60,17 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
             }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Welcome, $userName", style = MaterialTheme.typography.headlineSmall)
+    val gradientBackground = Brush.verticalGradient(
+        colors = listOf(Color(0xFF1A2980), Color(0xFF26D0CE))
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(gradientBackground)
+            .padding(16.dp)
+    ) {
+        Text("Welcome, $userName", style = MaterialTheme.typography.headlineSmall, color = Color.White)
         Spacer(modifier = Modifier.height(8.dp))
 
         bookedPropertyId?.let {
@@ -65,24 +78,34 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text("\uD83D\uDCC5 Your Requests:", style = MaterialTheme.typography.titleMedium)
+        Text("\uD83D\uDCC5 Your Requests:", style = MaterialTheme.typography.titleMedium, color = Color.White)
 
-        LazyColumn {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(userSchedules) { schedule ->
                 val status = schedule["scheduleStatus"] as? Boolean ?: false
                 val rejected = schedule["rejected"] as? Boolean ?: false
                 val note = schedule["adminNote"] as? String
 
-                Card(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(4.dp)
+                ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text("Property ID: ${schedule["propertyId"]}")
-                        Text("Date: ${schedule["scheduleDate"]}")
-                        Text("Time: ${schedule["scheduleTime"]}")
+                        Text("Property ID: ${schedule["propertyId"]}", color = Color.Black)
+                        Text("Date: ${schedule["scheduleDate"]}", color = Color.Black)
+                        Text("Time: ${schedule["scheduleTime"]}", color = Color.Black)
+
+                        Spacer(modifier = Modifier.height(8.dp))
 
                         if (status) {
-                            Text("✅ Accepted", color = MaterialTheme.colorScheme.primary)
+                            Text("✅ Accepted", color = Color(0xFF2E7D32))
                         } else if (rejected) {
-                            Text("❌ Rejected: $note", color = MaterialTheme.colorScheme.error)
+                            Text("❌ Rejected: $note", color = Color(0xFFD32F2F))
+                            Spacer(modifier = Modifier.height(4.dp))
                             Button(onClick = {
                                 selectedScheduleId = schedule["id"] as String
                                 showRescheduleDialog = true
@@ -90,7 +113,7 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
                                 Text("Reschedule")
                             }
                         } else {
-                            Text("⌛ Pending Review", color = MaterialTheme.colorScheme.secondary)
+                            Text("⌛ Pending Review", color = Color(0xFFF9A825))
                         }
                     }
                 }

@@ -1,5 +1,4 @@
 package com.example.mad_project_house_booking
-import androidx.annotation.DrawableRes
 
 data class Room(
     val id: String = "",
@@ -13,6 +12,7 @@ data class Room(
     val roomDetails: String = "",
     val facilities: String = "",
     val description: String = "",
-    val houseType: String=""
+    val houseType: String = "",
+    val isFavorited: Boolean
 )
 

@@ -41,7 +41,8 @@ fun UpdateProperty(propertyId: String, navController: NavHostController) {
                     roomDetails = doc.getString("roomDetails") ?: "",
                     facilities = doc.getString("facilities") ?: "",
                     description = doc.getString("description") ?: "",
-                    houseType = doc.getString("houseType") ?:""
+                    houseType = doc.getString("houseType") ?:"",
+                    isFavorited = false
 
                 )
             }
