@@ -32,6 +32,8 @@ class MainActivity : ComponentActivity() {
                         composable("registration") { SimpleRegistrationForm(navController,authViewModel) }
                         composable("userLanding"){ BottomNav(Modifier,authViewModel,navController) }
                         composable("adminLanding"){ BottomNavAdmin(Modifier,authViewModel,navController) }
+                        composable("guestLanding"){ BottomNavGuest(Modifier,navController) }
+                        composable("adminLogin"){ LoginAdmin(navController,authViewModel) }
                         composable("adminLogin"){ LoginAdmin(navController,authViewModel) }
                         composable("details/{propertyId}") { backStackEntry ->
                             val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""

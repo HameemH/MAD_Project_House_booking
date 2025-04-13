@@ -124,6 +124,13 @@ fun LoginPage(navController: NavHostController, authViewModel: AuthViewModel) {
                     actionText = "Admin Login",
                     onClick = { navController.navigate("adminLogin") }
                 )
+                Spacer(modifier = Modifier.height(12.dp))
+
+                AccountPrompt(
+                    prompt = "Wanna Check As guest?",
+                    actionText = "Guest Login",
+                    onClick = { navController.navigate("guestLanding") }
+                )
             }
         }
     }
