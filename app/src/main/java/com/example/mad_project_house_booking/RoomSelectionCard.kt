@@ -39,7 +39,8 @@ fun RoomSelectionCard(
     imageUrls: List<String>,
     onBookClick: () -> Unit,
     onDetailsClick: () -> Unit,
-    addFav:   ()->Unit
+    addFav:   ()->Unit,
+    revealComments: ()-> Unit
 ) {
 
     Card(
@@ -112,6 +113,14 @@ fun RoomSelectionCard(
                 border = BorderStroke(1.dp, Color.Blue)
             ) {
                 Text("View Details", color = Color.Blue)
+            }
+            OutlinedButton(
+                onClick = revealComments,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(50),
+                border = BorderStroke(1.dp, Color.Red)
+            ) {
+                Text("View Comment", color = Color.Red)
             }
         }
     }

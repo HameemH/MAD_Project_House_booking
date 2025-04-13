@@ -96,7 +96,7 @@ fun ScheduleBookForm(propertyId: String, navController: NavHostController) {
                 OutlinedTextField(
                     value = selectedDate,
                     onValueChange = { selectedDate = it },
-                    label = { Text("Select Date") },
+                    label = { Text("Write Your preferred Date") },
                     modifier = Modifier.fillMaxWidth()
                 )
 

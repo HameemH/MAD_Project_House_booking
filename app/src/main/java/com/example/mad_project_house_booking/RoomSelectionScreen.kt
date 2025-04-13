@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
 @Composable
 fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthViewModel) {
@@ -68,6 +69,14 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
     LaunchedEffect(uid) {
         uid?.let { authViewModel.fetchUserProfile(it) }
     }
+
+
+
+    var showCommentsDialog by remember { mutableStateOf(false) }
+    var currentPropertyId by remember { mutableStateOf("") }
+    var currentPropertyName by remember { mutableStateOf("") }
+
+
 
     Column(modifier = Modifier.fillMaxWidth()) {
         // Header Row with Gradient Background
@@ -171,10 +180,21 @@ fun RoomSelectionScreen(navController: NavHostController, authViewModel: AuthVie
                     onBookClick = { navController.navigate("schedule/${room.id}") },
                     onDetailsClick = { navController.navigate("details/${room.id}") },
                     addFav = { ToggleFavoriteProperty(context, uid = uid!!, propertyId = room.id) },
-                    isFavorited = room.isFavorited
+                    isFavorited = room.isFavorited,
+                            revealComments={ currentPropertyId = room.id
+                                currentPropertyName = room.houseName
+                                showCommentsDialog = true}
                 )
             }
         }
+    }
+
+    if (showCommentsDialog) {
+        PropertyCommentsDialog(
+            propertyId = currentPropertyId,
+            propertyName = currentPropertyName,
+            onDismiss = { showCommentsDialog = false }
+        )
     }
 }
 
@@ -209,4 +229,73 @@ fun ToggleFavoriteProperty(context: Context, uid: String, propertyId: String) {
         .addOnFailureListener { e ->
             Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
         }
+}
+
+
+@Composable
+fun PropertyCommentsDialog(
+    propertyId: String,
+    propertyName: String,
+    onDismiss: () -> Unit
+) {
+    val firestore = FirebaseFirestore.getInstance()
+    val context = LocalContext.current
+    var comments by remember { mutableStateOf<List<Map<String, Any>>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(propertyId) {
+        try {
+            val snapshot = firestore.collection("reviews")
+                .whereEqualTo("propertyId", propertyId)
+                .get()
+                .await()
+
+            comments = snapshot.documents.map { it.data ?: emptyMap() }
+        } catch (e: Exception) {
+            Toast.makeText(context, "Error loading comments", Toast.LENGTH_SHORT).show()
+        } finally {
+            isLoading = false
+        }
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Reviews for $propertyName") },
+        text = {
+            Column(modifier = Modifier.heightIn(max = 400.dp)) {
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                } else if (comments.isEmpty()) {
+                    Text("No reviews yet for this property",
+                        modifier = Modifier.padding(16.dp))
+                } else {
+                    LazyColumn {
+                        items(comments) { comment ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                elevation = CardDefaults.cardElevation(2.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(8.dp)) {
+                                    Text(
+                                        text = comment["userName"] as? String ?: "Anonymous",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(comment["review"] as? String ?: "")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Close")
+            }
+        }
+    )
 }
