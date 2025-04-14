@@ -47,6 +47,10 @@ class MainActivity : ComponentActivity() {
                             val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
                             ScheduleBookForm(propertyId = propertyId, navController = navController)
                         }
+                        composable("reqeustdetails/{propertyId}") { backStackEntry ->
+                            val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
+                         PropertyDetails(propertyId = propertyId, navController = navController)
+                        }
                     }
                 }
             }

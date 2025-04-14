@@ -26,17 +26,7 @@ fun HandleBooking() {
         schedules = schedules.filterNot { it["id"] == scheduleId }
     }
 
-    LaunchedEffect(true) {
-        firestore.collection("schedules")
-            .whereEqualTo("adminNotification", true)
-            .get()
-            .addOnSuccessListener { snapshot ->
-                schedules = snapshot.documents.map { doc ->
-                    val data = doc.data ?: emptyMap()
-                    data + ("id" to doc.id)
-                }
-            }
-    }
+
 
     Surface(
         modifier = Modifier.fillMaxSize(),

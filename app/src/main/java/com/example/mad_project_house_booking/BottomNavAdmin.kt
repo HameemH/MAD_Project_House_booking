@@ -31,7 +31,8 @@ fun BottomNavAdmin(modifier: Modifier = Modifier,authViewModel: AuthViewModel,na
     val navItemList = listOf(
         NavItem("Home", Icons.Default.Home,"adminLanding"),
         NavItem("Add", Icons.Default.Notifications,"addproperty"),
-        NavItem("Bookings", Icons.Default.Notifications,"handleBooking")
+        NavItem("Bookings", Icons.Default.Notifications,"handleBooking"),
+        NavItem("Property Reqeust", Icons.Default.Notifications,"handleProperty")
 
         )
 
@@ -67,6 +68,7 @@ fun BottomNavAdmin(modifier: Modifier = Modifier,authViewModel: AuthViewModel,na
                 "adminLanding" -> RoomSelectionScreenAdmin(navController ,authViewModel)
                 "addproperty" -> AddPropertyForm(navController)
                 "handleBooking" -> HandleBooking()
+                "handleProperty" -> PropertyRequestsScreen(navController)
 
             }
         }
