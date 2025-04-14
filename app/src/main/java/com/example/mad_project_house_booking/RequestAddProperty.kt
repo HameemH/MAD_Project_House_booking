@@ -1,5 +1,6 @@
 package com.example.mad_project_house_booking
 
+
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,7 +18,7 @@ import androidx.navigation.NavHostController
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
-fun AddPropertyForm(navController: NavHostController) {
+fun RequestAddPropertyForm(navController: NavHostController) {
 
     var location by remember { mutableStateOf("") }
     var houseName by remember { mutableStateOf("") }
@@ -44,7 +45,7 @@ fun AddPropertyForm(navController: NavHostController) {
     ) {
 
         Text(
-            text = "Add Property",
+            text = "Request to Add Your Property",
             style = TextStyle(
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
@@ -77,16 +78,17 @@ fun AddPropertyForm(navController: NavHostController) {
                     "facilities" to facilities,
                     "description" to description,
                     "isAvailable" to true,
+                    "requestStatus" to false,
                     "img1" to getDirectDriveLink(img1),
                     "img2" to getDirectDriveLink(img2),
                     "img3" to getDirectDriveLink(img3)
                 )
 
                 FirebaseFirestore.getInstance()
-                    .collection("properties")
+                    .collection("rproperties")
                     .add(property)
                     .addOnSuccessListener {
-                        Toast.makeText(context, "✅ Property uploaded!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "✅ Request uploaded!", Toast.LENGTH_SHORT).show()
                         navController.popBackStack() // Navigate back if needed
                     }
                     .addOnFailureListener { e ->
@@ -102,52 +104,3 @@ fun AddPropertyForm(navController: NavHostController) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CategoryDropdown(houseType: String, onTypeChange: (String) -> Unit) {
-    val categories = listOf("General", "Luxury", "Premium")
-    var expanded by remember { mutableStateOf(false) }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
-    ) {
-        OutlinedTextField(
-            value = houseType,
-            onValueChange = {},
-            readOnly = true,
-            label = { Text("Category") },
-            modifier = Modifier
-                .menuAnchor()
-                .fillMaxWidth(),
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
-        )
-
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            categories.forEach { category ->
-                DropdownMenuItem(
-                    text = { Text(category) },
-                    onClick = {
-                        onTypeChange(category)
-                        expanded = false
-                    }
-                )
-            }
-        }
-    }
-}
-
-
-fun getDirectDriveLink(driveLink: String): String {
-    val regex = Regex("""/d/([a-zA-Z0-9_-]+)""")
-    val match = regex.find(driveLink)
-    val fileId = match?.groupValues?.get(1)
-    return if (fileId != null) {
-        "https://drive.google.com/uc?export=download&id=$fileId"
-    } else {
-        driveLink // fallback to original
-    }
-}

@@ -34,7 +34,8 @@ fun BottomNav(modifier: Modifier = Modifier,authViewModel: AuthViewModel,navCont
     val navItemList = listOf(
         NavItem("Home", Icons.Default.Home,"userLanding"),
         NavItem("Profile", Icons.Default.Person, "addproperty"),
-        NavItem("Favourite", Icons.Default.Favorite, "favourite")
+        NavItem("Favourite", Icons.Default.Favorite, "favourite"),
+        NavItem("Reqeust to Add", Icons.Default.Favorite, "request")
 
     )
 
@@ -72,6 +73,7 @@ fun BottomNav(modifier: Modifier = Modifier,authViewModel: AuthViewModel,navCont
                 "userLanding" -> RoomSelectionScreen(navController ,authViewModel)
                 "addproperty" -> UserProfile(navController ,authViewModel)
                 "favourite"   -> FavouriteScreen(navController ,authViewModel)
+                "request"   -> RequestAddPropertyForm(navController)
 
             }
         }
