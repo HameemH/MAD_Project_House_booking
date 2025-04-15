@@ -25,7 +25,35 @@ import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+data class Schedule(
+    val firestoreId: String,
+    val propertyId: String,
+    val userId: String,
+    val scheduleDate: String,
+    val scheduleTime: String,
+    val scheduleStatus: Boolean?,
+    val rejected: Boolean?,
+    val adminNote: String?,
+    val bookingRequest: Boolean?
+) {
+    constructor() : this("", "", "", "", "", null, null, null, null)
 
+    companion object {
+        fun fromMap(map: Map<String, Any>): Schedule {
+            return Schedule(
+                firestoreId = map["firestoreId"] as? String ?: "",
+                propertyId = map["propertyId"] as? String ?: "",
+                userId = map["userId"] as? String ?: "",
+                scheduleDate = map["scheduleDate"] as? String ?: "",
+                scheduleTime = map["scheduleTime"] as? String ?: "",
+                scheduleStatus = map["scheduleStatus"] as? Boolean,
+                rejected = map["rejected"] as? Boolean,
+                adminNote = map["adminNote"] as? String,
+                bookingRequest = map["bookingRequest"] as? Boolean
+            )
+        }
+    }
+}
 @Composable
 fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) {
     val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -45,9 +73,15 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
     var reviewText by remember { mutableStateOf("") }
     var showLeaveHouseDialog by remember { mutableStateOf(false) }
 
-    var userSchedules by remember { mutableStateOf<List<Map<String, Any>>>(emptyList()) }
+    var userSchedules by remember { mutableStateOf<List<Schedule>>(emptyList()) }
     var schedulePropertyNames by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
     var isLoading by remember { mutableStateOf(true) }
+
+    var showRescheduleDialog by remember { mutableStateOf(false) }
+    var selectedScheduleId by remember { mutableStateOf<String?>(null) }
+    var newDate by remember { mutableStateOf(TextFieldValue()) }
+    var newTime by remember { mutableStateOf(TextFieldValue()) }
+    var newBookingRequest by remember { mutableStateOf(false) }
 
     // Fetch data
     LaunchedEffect(uid) {
@@ -79,10 +113,18 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
                 .get()
                 .await()
 
-            userSchedules = schedulesSnapshot.documents.map { it.data ?: emptyMap() }
+            userSchedules = schedulesSnapshot.documents.mapNotNull { doc ->
+                try {
+                    val data = doc.data?.toMutableMap() ?: mutableMapOf()
+                    data["firestoreId"] = doc.id
+                    Schedule.fromMap(data)
+                } catch (e: Exception) {
+                    null
+                }
+            }
 
             // Fetch all property names for schedules
-            val propertyIds = userSchedules.mapNotNull { it["propertyId"] as? String }.distinct()
+            val propertyIds = userSchedules.map { it.propertyId }.distinct()
             val namesMap = mutableMapOf<String, String>()
             propertyIds.forEach { id ->
                 val doc = firestore.collection("properties").document(id).get().await()
@@ -97,7 +139,6 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
         }
     }
 
-    // UI - Keep your existing background and layout structure
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -111,14 +152,13 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else {
-            // 1. User Profile Card (keep your existing UI)
+            // 1. User Profile Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(4.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // Editable Name
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Name: $userName", style = MaterialTheme.typography.bodyLarge)
                         IconButton(
@@ -132,7 +172,6 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
                         }
                     }
 
-                    // Editable Contact
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Contact: $userContact", style = MaterialTheme.typography.bodyLarge)
                         IconButton(
@@ -150,7 +189,7 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 2. Booked Property Section (with actual property name)
+            // 2. Booked Property Section
             bookedProperty?.let {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -185,7 +224,7 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // 3. Requests Section with property names
+            // 3. Requests Section
             Text("📅 Your Requests:",
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.White)
@@ -195,8 +234,7 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(userSchedules) { schedule ->
-                        val propertyId = schedule["propertyId"] as? String ?: ""
-                        val propertyName = schedulePropertyNames[propertyId] ?: "Unknown Property"
+                        val propertyName = schedulePropertyNames[schedule.propertyId] ?: "Unknown Property"
 
                         Card(
                             modifier = Modifier
@@ -208,20 +246,25 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(propertyName, style = MaterialTheme.typography.titleSmall)
-                                Text("ID: $propertyId")
-                                Text("Date: ${schedule["scheduleDate"]}")
-                                Text("Time: ${schedule["scheduleTime"]}")
+                                Text("ID: ${schedule.propertyId}")
+                                Text("Date: ${schedule.scheduleDate}")
+                                Text("Time: ${schedule.scheduleTime}")
+                                Text("Schedule ID: ${schedule.firestoreId}")
 
                                 Spacer(modifier = Modifier.height(8.dp))
 
                                 when {
-                                    schedule["scheduleStatus"] as? Boolean == true ->
+                                    schedule.scheduleStatus == true ->
                                         Text("✅ Accepted", color = Color(0xFF2E7D32))
-                                    schedule["rejected"] as? Boolean == true -> {
-                                        Text("❌ Rejected: ${schedule["adminNote"]}",
+                                    schedule.rejected == true -> {
+                                        Text("❌ Rejected: ${schedule.adminNote}",
                                             color = Color(0xFFD32F2F))
                                         Spacer(modifier = Modifier.height(4.dp))
-                                        Button(onClick = { /* Handle reschedule */ }) {
+
+                                        Button(onClick = {
+                                            selectedScheduleId = schedule.firestoreId
+                                            showRescheduleDialog = true
+                                        }) {
                                             Text("Reschedule")
                                         }
                                     }
@@ -234,6 +277,8 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
             }
         }
     }
+
+
 
     // Dialogs (keep your existing implementations)
     // 1. Edit Dialog
@@ -349,5 +394,76 @@ fun UserProfile(navController: NavHostController, authViewModel: AuthViewModel) 
             }
         )
     }
+
+    if (showRescheduleDialog && selectedScheduleId != null) {
+        AlertDialog(
+            onDismissRequest = {
+                showRescheduleDialog = false
+                selectedScheduleId = null
+                newDate = TextFieldValue()
+                newTime = TextFieldValue()
+                newBookingRequest = false
+            },
+            title = { Text("Reschedule Visit") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = newDate,
+                        onValueChange = { newDate = it },
+                        label = { Text("New Date") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = newTime,
+                        onValueChange = { newTime = it },
+                        label = { Text("New Time") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(
+                            checked = newBookingRequest,
+                            onCheckedChange = { newBookingRequest = it }
+                        )
+                        Text("Request to Book")
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    selectedScheduleId?.let { sid ->
+                        firestore.collection("schedules").document(sid)
+                            .update(
+                                mapOf(
+                                    "scheduleDate" to newDate.text,
+                                    "scheduleTime" to newTime.text,
+                                    "bookingRequest" to newBookingRequest,
+                                    "adminNotification" to true,
+                                    "userNotification" to false,
+                                    "rejected" to false
+                                )
+                            )
+                            .addOnSuccessListener {
+                                Toast.makeText(context, "Rescheduled successfully", Toast.LENGTH_SHORT).show()
+                                showRescheduleDialog = false
+                                selectedScheduleId = null
+                                newDate = TextFieldValue()
+                                newTime = TextFieldValue()
+                            }
+                    }
+                }) {
+                    Text("Submit")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showRescheduleDialog = false
+                    selectedScheduleId = null
+                }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
 }
 

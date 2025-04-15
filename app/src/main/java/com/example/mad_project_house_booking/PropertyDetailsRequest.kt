@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 
 import coil.compose.AsyncImage
@@ -80,6 +82,8 @@ fun PropertyDetails(propertyId: String, navController: NavHostController) {
                 modifier = Modifier
                     .padding(padding)
                     .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+
             ) {
                 HorizontalPager(
                     state = pagerState,
