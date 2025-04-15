@@ -22,6 +22,19 @@ fun HandleBooking() {
     var selectedScheduleId by remember { mutableStateOf<String?>(null) }
     var rejectionNote by remember { mutableStateOf(TextFieldValue()) }
 
+    LaunchedEffect(true) {
+        firestore.collection("schedules")
+            .whereEqualTo("adminNotification", true)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                schedules = snapshot.documents.map { doc ->
+                    val data = doc.data ?: emptyMap()
+                    data + ("id" to doc.id)
+                }
+            }
+    }
+
+
     fun removeFromUI(scheduleId: String) {
         schedules = schedules.filterNot { it["id"] == scheduleId }
     }
@@ -161,6 +174,8 @@ fun HandleBookingCard(
     onAcceptBooking: () -> Unit,
     onRejectBooking: () -> Unit
 ) {
+
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
