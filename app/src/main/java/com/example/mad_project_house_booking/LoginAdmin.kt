@@ -3,6 +3,7 @@ package com.example.mad_project_house_booking
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -13,9 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.fontResource
 import androidx.navigation.NavHostController
 
 @Composable
@@ -65,11 +72,41 @@ fun LoginAdmin(navController: NavHostController, authViewModel: AuthViewModel) {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Logo
+                Image(
+                    painter = painterResource(id = R.drawable.premier_logo),
+                    contentDescription = "PremierHouse Logo",
+                    modifier = Modifier
+                        .size(80.dp)
+                        .padding(bottom = 8.dp)
+                )
+
+                // Gradient App Name
+                Text(
+                    text = "PremierHouse",
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        brush = Brush.linearGradient(
+                            colors = listOf(Color(0xFF1A2980), Color(0xFF26D0CE))
+                        ),
+                    ),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                Divider(
+                    color = Color.LightGray,
+                    thickness = 1.dp,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+
+                // Admin Login Title
                 Text(
                     text = "Admin Log In",
-                    fontSize = 24.sp,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    color = MaterialTheme.colorScheme.primary
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.DarkGray,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
 
                 // Email Field
@@ -96,15 +133,19 @@ fun LoginAdmin(navController: NavHostController, authViewModel: AuthViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A2980))
                 ) {
-                    Text("Login", style = androidx.compose.ui.text.TextStyle(
-                        fontSize = 18.sp,
-                        color = Color.White
-                    )
+                    Text(
+                        "Login",
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            color = Color.White
+                        )
                     )
                 }
 
+                // Spacer
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // "User Login" Navigation

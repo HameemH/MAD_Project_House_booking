@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -68,17 +69,41 @@ fun LoginPage(navController: NavHostController, authViewModel: AuthViewModel) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Image(
+                    painter = painterResource(id = R.drawable.premier_logo),
+                    contentDescription = "PremierHouse Logo",
+                    modifier = Modifier
+                        .size(80.dp)
+                        .padding(bottom = 8.dp)
+                )
+
+                Text(
+                    text = "PremierHouse",
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        brush = Brush.linearGradient(
+                            colors = listOf(Color(0xFF1A2980), Color(0xFF26D0CE))
+                        ),
+
+                    ),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                Divider(
+                    color = Color.LightGray,
+                    thickness = 1.dp,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
                 Text(
                     text = "Login",
-                    fontSize = 28.sp, // Font size for the text
-                    fontWeight = FontWeight.Bold, // Make the text bold
-                    color = MaterialTheme.colorScheme.primary, // Use the primary color from the theme
-                    letterSpacing = 1.5.sp, // Add some spacing between letters
-                    modifier = Modifier
-                        .padding(bottom = 24.dp) // Padding below the text
-                        .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp)) // Add background with rounded corners
-                        .padding(horizontal = 16.dp, vertical = 8.dp) // Padding inside the background
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.DarkGray,
+                    modifier = Modifier.padding(bottom = 24.dp)
                 )
+
+
                 InputField(
                     label = "Email Address",
                     value = email,
@@ -100,14 +125,23 @@ fun LoginPage(navController: NavHostController, authViewModel: AuthViewModel) {
 
                 Button(
                     onClick = { authViewModel.login(email, password) },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF1A2980)
+                    ),
+                    shape = RoundedCornerShape(50),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
                 ) {
-                    Text(text = "Login", color = Color.White, fontSize = 16.sp)
+                    Text(
+                        text = "Login",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
+
 
                 Spacer(modifier = Modifier.height(20.dp))
 
