@@ -1,4 +1,4 @@
-package com.example.mad_project_house_booking
+package com.example.mad_project_house_booking.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.*
@@ -10,7 +10,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +22,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.mad_project_house_booking.data_util.AuthState
+import com.example.mad_project_house_booking.data_util.AuthViewModel
+import com.example.mad_project_house_booking.R
 
 @Composable
 fun LoginPage(navController: NavHostController, authViewModel: AuthViewModel) {

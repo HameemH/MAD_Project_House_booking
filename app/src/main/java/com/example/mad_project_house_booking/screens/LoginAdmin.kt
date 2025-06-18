@@ -1,4 +1,4 @@
-package com.example.mad_project_house_booking
+package com.example.mad_project_house_booking.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -15,15 +15,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.fontResource
 import androidx.navigation.NavHostController
+import com.example.mad_project_house_booking.data_util.AuthState
+import com.example.mad_project_house_booking.data_util.AuthViewModel
+import com.example.mad_project_house_booking.R
 
 @Composable
 fun LoginAdmin(navController: NavHostController, authViewModel: AuthViewModel) {

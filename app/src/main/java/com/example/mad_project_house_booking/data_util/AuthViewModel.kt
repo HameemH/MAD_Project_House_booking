@@ -1,4 +1,4 @@
-package  com.example.mad_project_house_booking
+package  com.example.mad_project_house_booking.data_util
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -61,7 +61,8 @@ class AuthViewModel : ViewModel() {
                 if (task.isSuccessful){
                     _authState.value = AuthState.Authenticated
                 }else{
-                    _authState.value = AuthState.Error(task.exception?.message?:"Something went wrong")
+                    _authState.value =
+                        AuthState.Error(task.exception?.message ?: "Something went wrong")
                 }
             }
     }
@@ -97,7 +98,8 @@ class AuthViewModel : ViewModel() {
                             _authState.value = AuthState.Error("Firestore Error: ${e.message}")
                         }
                 } else {
-                    _authState.value = AuthState.Error(task.exception?.message ?: "Something went wrong")
+                    _authState.value =
+                        AuthState.Error(task.exception?.message ?: "Something went wrong")
                 }
             }
 

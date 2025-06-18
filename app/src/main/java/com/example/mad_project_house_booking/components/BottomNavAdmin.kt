@@ -1,9 +1,11 @@
-package com.example.mad_project_house_booking
+package com.example.mad_project_house_booking.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.ListAlt
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,19 +19,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.mad_project_house_booking.data_util.AuthViewModel
+import com.example.mad_project_house_booking.screens.HandleBooking
+import com.example.mad_project_house_booking.data_util.NavItem
+import com.example.mad_project_house_booking.screens.PropertyRequestsScreen
+import com.example.mad_project_house_booking.R
+import com.example.mad_project_house_booking.screens.AddPropertyForm
+import com.example.mad_project_house_booking.screens.RoomSelectionScreenAdmin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomNavGuest(
+fun BottomNavAdmin(
     modifier: Modifier = Modifier,
+    authViewModel: AuthViewModel,
     navController: NavHostController
 ) {
-    var currentRoute by remember { mutableStateOf("guestLanding") }
+    var currentRoute by remember { mutableStateOf("adminLanding") }
 
     val navItemList = listOf(
-        NavItem("Home", Icons.Default.Home, "guestLanding"),
-        NavItem("Rules", Icons.Default.Notifications, "rules")
+        NavItem("Home", Icons.Default.Home, "adminLanding"),
+        NavItem("Add", Icons.Default.Add, "addproperty"),
+        NavItem("Bookings", Icons.Default.Notifications, "handleBooking"),
+        NavItem("Requests", Icons.Default.ListAlt, "handleProperty")
     )
+
 
 
     Scaffold(
@@ -69,7 +82,7 @@ fun BottomNavGuest(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            // Stylish logo + title (same as user and admin version)
+            // Stylish logo + title (same as user version)
             Spacer(modifier = Modifier.height(12.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -96,13 +109,13 @@ fun BottomNavGuest(
             }
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Guest Pages
+            // Admin Pages
             when (currentRoute) {
-                "guestLanding" -> RoomSelectionScreenGuest(navController)
-                "rules" -> Rules(navController)  // Pass the navController here
+                "adminLanding" -> RoomSelectionScreenAdmin(navController, authViewModel)
+                "addproperty" -> AddPropertyForm(navController)
+                "handleBooking" -> HandleBooking()
+                "handleProperty" -> PropertyRequestsScreen(navController)
             }
-
-        }
         }
     }
-
+}

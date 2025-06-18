@@ -1,41 +1,50 @@
-package com.example.mad_project_house_booking
+package com.example.mad_project_house_booking.screens
 
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.google.firebase.auth.FirebaseAuth
+import com.example.mad_project_house_booking.data_util.Room
+import com.example.mad_project_house_booking.components.RoomSelectionCardGuest
 import com.google.firebase.firestore.FirebaseFirestore
 
+
 @Composable
-fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: AuthViewModel) {
-    // List of rooms
-
+fun RoomSelectionScreenGuest(navController: NavHostController)
+{
     val rooms = remember { mutableStateListOf<Room>() }
-
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var selectedRoomId by remember { mutableStateOf("") }
-    val context = LocalContext.current
-
-    var showCategoryDropdown by remember { mutableStateOf(false) }
-    var selectedCategory by remember { mutableStateOf("All Categories") }
-    val categories = listOf("All Categories", "General", "Luxury", "Premium")
 
     LaunchedEffect(Unit) {
         FirebaseFirestore.getInstance().collection("properties").get()
@@ -53,25 +62,34 @@ fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: Au
                         roomDetails = doc.getString("roomDetails") ?: "",
                         facilities = doc.getString("facilities") ?: "",
                         description = doc.getString("description") ?: "",
-                        houseType = doc.getString("houseType") ?:"",
-                        isFavorited = false
+                        houseType = doc.getString("houseType") ?: "",
+                        isFavorited = false // Set initial state of isFavorited to false
                     )
                     rooms.add(room)
+
                 }
             }
     }
+
+    var showCategoryDropdown by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf("All Categories") }
+    val categories = listOf("All Categories", "General", "Luxury", "Premium")
+
     val filteredRooms = remember(rooms, selectedCategory) {
         if (selectedCategory == "All Categories") rooms
         else rooms.filter { it.houseType == selectedCategory }
     }
 
 
-    val uid = FirebaseAuth.getInstance().currentUser?.uid
-    val username by authViewModel.username
 
-    LaunchedEffect(uid) {
-        uid?.let { authViewModel.fetchUserProfile(it) }
-    }
+
+
+    var showCommentsDialog by remember { mutableStateOf(false) }
+    var currentPropertyId by remember { mutableStateOf("") }
+    var currentPropertyName by remember { mutableStateOf("") }
+
+
+
     Column(modifier = Modifier.fillMaxWidth()) {
         // Header Row with Gradient Background
         Box(
@@ -88,7 +106,7 @@ fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: Au
                 modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Text(
-                    text = "Welcome, $username", // Personalized greeting
+                    text = "Welcome, Guest", // Personalized greeting
                     style = MaterialTheme.typography.titleMedium.copy(
                         color = Color.White, fontWeight = FontWeight.Bold
                     ),
@@ -99,9 +117,11 @@ fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: Au
                     style = MaterialTheme.typography.bodyLarge.copy(color = Color.White.copy(alpha = 0.7f))
                 )
             }
+
+            // Sign-out button at the top right corner
             TextButton(
                 onClick = {
-                    authViewModel.signout()
+
                     navController.navigate("login") {
                         popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
@@ -110,11 +130,10 @@ fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: Au
                 },
                 modifier = Modifier.align(Alignment.TopEnd)
             ) {
-                Text("Sign Out", color = Color.Red)
+                Text("Login", color = Color.Red)
             }
-            }
+        }
 
-            // Category Dropdown
         // Category Dropdown
         Box(
             modifier = Modifier
@@ -160,83 +179,32 @@ fun RoomSelectionScreenAdmin(navController: NavHostController, authViewModel: Au
             }
         }
     }
-        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
 
-
-            // LazyColumn for displaying multiple rooms
-            LazyColumn {
-                items(filteredRooms) { room ->
-                    RoomSelectionCardAdmin (
-                        roomName = room.houseName,
-                        price = room.rent,
-                        isAvailable = room.isAvailable,
-                        imageUrls = listOf(room.img1, room.img2, room.img3),
-                        onUpdateClick = { navController.navigate("update/${room.id}") },
-                        onDetailsClick = { selectedRoomId = room.id
-                            showDeleteDialog = true }
-                    )
-                }
-            }
-
-            if (showDeleteDialog && selectedRoomId != null) {
-                DeletePropertyDialog(
-                    roomId = selectedRoomId!!,
-                    onDeleteConfirmed = {
-                        Handler(Looper.getMainLooper()).post {
-                            Toast.makeText(context, "Property deleted.", Toast.LENGTH_SHORT).show()
-                        }
-                        rooms.removeIf { it.id == selectedRoomId }
-                        showDeleteDialog = false
-                        selectedRoomId = ""
-                        // Optionally: remove the room from list
-                    },
-                    onDismiss = {
-                        showDeleteDialog = false
-                        selectedRoomId = ""
-                    }
+    // Main Content
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        LazyColumn {
+            items(filteredRooms) { room ->
+                RoomSelectionCardGuest(
+                    roomName = room.houseName,
+                    price = room.rent,
+                    isAvailable = room.isAvailable,
+                    imageUrls = listOf(room.img1, room.img2, room.img3),
+                    onpopUpClick = {navController.navigate("login")  },
+                    onDetailsClick = { navController.navigate("details/${room.id}") },
+                    revealComments={ currentPropertyId = room.id
+                        currentPropertyName = room.houseName
+                        showCommentsDialog = true}
                 )
             }
-
-
-
         }
-
-
     }
 
-
-@Composable
-fun DeletePropertyDialog(
-    roomId: String,
-    onDeleteConfirmed: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    val firestore = FirebaseFirestore.getInstance()
-    val context = LocalContext.current
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Delete Property") },
-        text = { Text("Are you sure you want to delete this property?") },
-        confirmButton = {
-            TextButton(onClick = {
-                firestore.collection("properties").document(roomId)
-                    .delete()
-                    .addOnSuccessListener {
-                        Toast.makeText(context, "Property deleted.", Toast.LENGTH_SHORT).show()
-                        onDeleteConfirmed()
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(context, "Failed to delete: ${e.message}", Toast.LENGTH_LONG).show()
-                    }
-            }) {
-                Text("Delete", color = Color.Red)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
+    if (showCommentsDialog) {
+        PropertyCommentsDialog(
+            propertyId = currentPropertyId,
+            propertyName = currentPropertyName,
+            onDismiss = { showCommentsDialog = false }
+        )
+    }
 }
+

@@ -1,12 +1,12 @@
-package com.example.mad_project_house_booking
+package com.example.mad_project_house_booking.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.ListAlt
-import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.RequestPage
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,29 +15,32 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.mad_project_house_booking.data_util.AuthViewModel
+import com.example.mad_project_house_booking.screens.FavouriteScreen
+import com.example.mad_project_house_booking.data_util.NavItem
+import com.example.mad_project_house_booking.R
+import com.example.mad_project_house_booking.screens.RequestAddPropertyForm
+import com.example.mad_project_house_booking.screens.UserProfile
+import com.example.mad_project_house_booking.screens.RoomSelectionScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomNavAdmin(
+fun BottomNav(
     modifier: Modifier = Modifier,
     authViewModel: AuthViewModel,
     navController: NavHostController
 ) {
-    var currentRoute by remember { mutableStateOf("adminLanding") }
-
+    var currentRoute by remember { mutableStateOf("userLanding") }
     val navItemList = listOf(
-        NavItem("Home", Icons.Default.Home, "adminLanding"),
-        NavItem("Add", Icons.Default.Add, "addproperty"),
-        NavItem("Bookings", Icons.Default.Notifications, "handleBooking"),
-        NavItem("Requests", Icons.Default.ListAlt, "handleProperty")
+        NavItem("Home", Icons.Default.Home, "userLanding"),
+        NavItem("Profile", Icons.Default.Person, "addproperty"),
+        NavItem("Fav", Icons.Default.Favorite, "favourite"),
+        NavItem("Request", Icons.Default.RequestPage, "request")
     )
-
 
 
     Scaffold(
@@ -46,12 +49,15 @@ fun BottomNavAdmin(
             NavigationBar(
                 tonalElevation = 6.dp,
                 containerColor = Color.White.copy(alpha = 0.98f),
-                modifier = Modifier.height(64.dp)
+                modifier = Modifier
+                    .height(64.dp)
             ) {
                 navItemList.forEach { navItem ->
                     NavigationBarItem(
                         selected = currentRoute == navItem.route,
-                        onClick = { currentRoute = navItem.route },
+                        onClick = {
+                            currentRoute = navItem.route
+                        },
                         icon = {
                             Icon(
                                 imageVector = navItem.icon,
@@ -77,7 +83,7 @@ fun BottomNavAdmin(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            // Stylish logo + title (same as user version)
+            // Logo + Name Header - Slightly smaller now
             Spacer(modifier = Modifier.height(12.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -98,18 +104,17 @@ fun BottomNavAdmin(
                         brush = Brush.linearGradient(
                             listOf(Color(0xFF1A2980), Color(0xFF26D0CE))
                         ),
-
                     )
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Admin Pages
+            // Screens based on selected route
             when (currentRoute) {
-                "adminLanding" -> RoomSelectionScreenAdmin(navController, authViewModel)
-                "addproperty" -> AddPropertyForm(navController)
-                "handleBooking" -> HandleBooking()
-                "handleProperty" -> PropertyRequestsScreen(navController)
+                "userLanding" -> RoomSelectionScreen(navController, authViewModel)
+                "addproperty" -> UserProfile(navController, authViewModel)
+                "favourite" -> FavouriteScreen(navController, authViewModel)
+                "request" -> RequestAddPropertyForm(navController)
             }
         }
     }

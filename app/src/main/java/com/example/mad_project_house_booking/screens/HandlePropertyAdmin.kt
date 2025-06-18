@@ -1,4 +1,4 @@
-package com.example.mad_project_house_booking
+package com.example.mad_project_house_booking.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.mad_project_house_booking.components.PropertyRequestCard
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
@@ -109,53 +110,3 @@ fun PropertyRequestsScreen(navController: NavHostController) {
     }
 }
 
-@Composable
-fun PropertyRequestCard(
-    name: String,
-    location: String,
-    onReject: () -> Unit,
-    onViewDetails: () -> Unit,
-    onApprove: () -> Unit
-) {
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(name, style = MaterialTheme.typography.titleMedium)
-            Text(location, style = MaterialTheme.typography.bodyMedium)
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                FilledTonalButton(
-                    onClick = onReject,
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                ) {
-                    Text("Reject")
-                }
-
-                OutlinedButton(
-                    onClick = onViewDetails,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Details")
-                }
-
-                Button(
-                    onClick = onApprove,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Approve")
-                }
-            }
-        }
-    }
-}

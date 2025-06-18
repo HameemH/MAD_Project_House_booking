@@ -1,4 +1,4 @@
-package com.example.mad_project_house_booking
+package com.example.mad_project_house_booking.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.layout.ContentScale
 import androidx.navigation.NavHostController
+import com.example.mad_project_house_booking.data_util.Room
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 import com.google.accompanist.pager.ExperimentalPagerApi

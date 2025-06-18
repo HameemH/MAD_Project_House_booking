@@ -3,20 +3,24 @@ package com.example.mad_project_house_booking
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.mad_project_house_booking.ui.theme.MAD_Project_House_bookingTheme
+import com.example.mad_project_house_booking.components.BottomNav
+import com.example.mad_project_house_booking.components.BottomNavAdmin
+import com.example.mad_project_house_booking.components.BottomNavGuest
+import com.example.mad_project_house_booking.data_util.AuthViewModel
+import com.example.mad_project_house_booking.screens.LoginAdmin
+import com.example.mad_project_house_booking.screens.LoginPage
+import com.example.mad_project_house_booking.screens.PropertyDetails
+import com.example.mad_project_house_booking.screens.PropertyDetailsScreen
+import com.example.mad_project_house_booking.screens.ScheduleBookForm
+import com.example.mad_project_house_booking.screens.SimpleRegistrationForm
+import com.example.mad_project_house_booking.screens.UpdateProperty
 
 
 class MainActivity : ComponentActivity() {

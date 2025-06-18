@@ -1,4 +1,4 @@
-package com.example.mad_project_house_booking
+package com.example.mad_project_house_booking.data_util
 
 data class Room(
     val id: String = "",

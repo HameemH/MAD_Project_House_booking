@@ -1,4 +1,4 @@
-package com.example.mad_project_house_booking
+package com.example.mad_project_house_booking.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.mad_project_house_booking.components.HandleBookingCard
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
@@ -166,49 +167,3 @@ fun HandleBooking() {
     }
 }
 
-@Composable
-fun HandleBookingCard(
-    schedule: Map<String, Any>,
-    onAcceptSchedule: () -> Unit,
-    onRejectSchedule: () -> Unit,
-    onAcceptBooking: () -> Unit,
-    onRejectBooking: () -> Unit
-) {
-
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(6.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("User ID: ${schedule["userId"]}", style = MaterialTheme.typography.bodyMedium)
-            Text("Property ID: ${schedule["propertyId"]}", style = MaterialTheme.typography.bodyMedium)
-            Text("Date: ${schedule["scheduleDate"]}", style = MaterialTheme.typography.bodyMedium)
-            Text("Time: ${schedule["scheduleTime"]}", style = MaterialTheme.typography.bodyMedium)
-
-            val bookingRequest = schedule["bookingRequest"] as? Boolean ?: false
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Button(
-                    onClick = if (bookingRequest) onAcceptBooking else onAcceptSchedule,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(if (bookingRequest) "Accept Booking" else "Accept Schedule")
-                }
-                OutlinedButton(
-                    onClick = if (bookingRequest) onRejectBooking else onRejectSchedule,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(if (bookingRequest) "Reject Booking" else "Reject Schedule")
-                }
-            }
-        }
-    }
-}

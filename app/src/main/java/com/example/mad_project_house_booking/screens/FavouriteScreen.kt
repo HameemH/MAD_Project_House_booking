@@ -1,4 +1,4 @@
-package com.example.mad_project_house_booking
+package com.example.mad_project_house_booking.screens
 
 import android.content.Context
 import android.widget.Toast
@@ -23,6 +23,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.mad_project_house_booking.components.ImageSliderWithIndicators
+import com.example.mad_project_house_booking.data_util.AuthViewModel
+import com.example.mad_project_house_booking.data_util.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -86,9 +89,11 @@ fun FavouriteScreen(navController: NavHostController, authViewModel: AuthViewMod
                         imageUrls = listOf(room.img1, room.img2, room.img3),
                         onBookClick = { navController.navigate("schedule/${room.id}") },
                         onDetailsClick = { navController.navigate("details/${room.id}")},
-                        RemoveFav = {RemoveFavoriteProperty(context,uid=uid!!, room.id,onRemoved = {
+                        RemoveFav = {
+                            RemoveFavoriteProperty(context,uid=uid!!, room.id,onRemoved = {
                             favourites.remove(room) }
-                        )}
+                        )
+                        }
                     )
                 }
             }
